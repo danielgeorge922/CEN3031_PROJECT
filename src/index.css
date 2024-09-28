@@ -6,8 +6,8 @@
 
 body {
     font-family: "Poppins", sans-serif;
-  }
-  
+}
+
 @layer base {
     li {
         @apply p-4 ml-3;

@@ -9,6 +9,14 @@ const StyledTextField = styled(TextField)({
   width: "300px",
 });
 
+// Updated ValidationMessage style
+const ValidationMessage = styled("p")({
+  color: "gray",
+  fontSize: "0.6rem",  // Smaller font size
+  width: "300px",  // Same width as the text field
+  textAlign: "left",  // Align text to the left
+});
+
 const SignUpForm = ({ handleClose, handleSignUp }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -19,6 +27,9 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
   // Regular expression for checking names (no special characters or spaces)
   const nameRegex = /^[A-Za-z]+$/;
 
+  // Password validation rules: length > 8, must contain uppercase, lowercase, and a number
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
   // Validate first and last name (must not contain special characters or spaces)
   const isValidFirstName = firstName && nameRegex.test(firstName);
   const isValidLastName = lastName && nameRegex.test(lastName);
@@ -26,33 +37,23 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
   // Validate email (must end with '@ufl.edu')
   const isValidEmail = email && email.endsWith("@ufl.edu");
 
+  // Validate password strength
+  const isValidPassword = password && passwordRegex.test(password);
+
   // Validate password match
   const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
-
-  // Password should just check for any input (length > 0)
-  const isValidPassword = password && password.length > 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // BACKEND: Ensure the backend checks if a user with this email already exists in the database.
-    // If the user exists, return an appropriate error message.
-    // If the user does not exist, proceed to save the user in the database.
     const userData = { firstName, lastName, email, password };
 
     try {
-      // BACKEND: Use Axios to send this userData to the backend API for user registration.
       const response = await axios.post("YOUR_BACKEND_API/signup", userData);
-
-      // BACKEND: Return a success message if the user is created successfully.
-      // Handle success response
       console.log(response.data);  // Success message from the backend
-
       handleSignUp(userData);  // Signal success in the front-end
       handleClose();  // Close the form after successful submission
-
     } catch (error) {
-      // BACKEND: Handle errors (such as if the user already exists or any other issues).
       console.error("There was an error signing up the user:", error);
       alert(error.response?.data?.message || "An error occurred. Please try again.");
     }
@@ -66,9 +67,10 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "2rem",
+        padding: "1.5rem",
       }}
     >
+      {/* First Name Field */}
       <StyledTextField
         label="First Name"
         variant="filled"
@@ -87,6 +89,9 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
           ),
         }}
       />
+      <ValidationMessage>First name must not contain special characters or spaces.</ValidationMessage>
+
+      {/* Last Name Field */}
       <StyledTextField
         label="Last Name"
         variant="filled"
@@ -105,6 +110,9 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
           ),
         }}
       />
+      <ValidationMessage>Last name must not contain special characters or spaces.</ValidationMessage>
+
+      {/* Email Field */}
       <StyledTextField
         label="Email"
         variant="filled"
@@ -123,6 +131,9 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
           ),
         }}
       />
+      <ValidationMessage>Email must contain @ufl.edu.</ValidationMessage>
+
+      {/* Password Field */}
       <StyledTextField
         label="Password"
         variant="filled"
@@ -131,17 +142,20 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         InputProps={{
-          endAdornment: password && (
+          endAdornment: (
             <InputAdornment position="end">
-              {isValidPassword ? (
+              {password && isValidPassword ? (
                 <CheckIcon style={{ color: "green" }} />
-              ) : (
+              ) : password ? (
                 <CloseIcon style={{ color: "red" }} />
-              )}
+              ) : null}
             </InputAdornment>
           ),
         }}
       />
+      <ValidationMessage>Password must be at least 8 characters, contain an uppercase letter, a lowercase letter, and a number.</ValidationMessage>
+
+      {/* Confirm Password Field */}
       <StyledTextField
         label="Confirm Password"
         variant="filled"
@@ -150,17 +164,18 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         InputProps={{
-          endAdornment: confirmPassword && (
+          endAdornment: (
             <InputAdornment position="end">
-              {doPasswordsMatch ? (
+              {confirmPassword && doPasswordsMatch ? (
                 <CheckIcon style={{ color: "green" }} />
-              ) : (
+              ) : confirmPassword ? (
                 <CloseIcon style={{ color: "red" }} />
-              )}
+              ) : null}
             </InputAdornment>
           ),
         }}
       />
+      <ValidationMessage>Passwords must match.</ValidationMessage>
 
       <div>
         <Button variant="contained" sx={{ margin: "2rem" }} onClick={handleClose}>
