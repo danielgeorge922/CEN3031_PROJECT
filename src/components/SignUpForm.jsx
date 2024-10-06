@@ -2,60 +2,47 @@ import React, { useState } from "react";
 import { Button, styled, TextField, InputAdornment } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";  // BACKEND: Axios is imported to handle API requests
+import { useNavigate } from 'react-router-dom';  // Import useNavigate from react-router-dom
 
 const StyledTextField = styled(TextField)({
   margin: "1rem",
   width: "300px",
 });
 
-// Updated ValidationMessage style
 const ValidationMessage = styled("p")({
   color: "gray",
-  fontSize: "0.6rem",  // Smaller font size
-  width: "300px",  // Same width as the text field
-  textAlign: "left",  // Align text to the left
+  fontSize: "0.6rem",  
+  width: "300px",  
+  textAlign: "left",  
 });
 
-const SignUpForm = ({ handleClose, handleSignUp }) => {
+const SignUpForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Regular expression for checking names (no special characters or spaces)
-  const nameRegex = /^[A-Za-z]+$/;
+  const navigate = useNavigate();  // Initialize navigate
 
-  // Password validation rules: length > 8, must contain uppercase, lowercase, and a number
+  const nameRegex = /^[A-Za-z]+$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-  // Validate first and last name (must not contain special characters or spaces)
   const isValidFirstName = firstName && nameRegex.test(firstName);
   const isValidLastName = lastName && nameRegex.test(lastName);
-
-  // Validate email (must end with '@ufl.edu')
   const isValidEmail = email && email.endsWith("@ufl.edu");
-
-  // Validate password strength
   const isValidPassword = password && passwordRegex.test(password);
-
-  // Validate password match
   const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const userData = { firstName, lastName, email, password };
-
-    try {
-      const response = await axios.post("YOUR_BACKEND_API/signup", userData);
-      console.log(response.data);  // Success message from the backend
-      handleSignUp(userData);  // Signal success in the front-end
-      handleClose();  // Close the form after successful submission
-    } catch (error) {
-      console.error("There was an error signing up the user:", error);
-      alert(error.response?.data?.message || "An error occurred. Please try again.");
+    // If form validation passes, navigate to the main page
+    if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
+      // Navigate to /main after successful form validation
+      navigate('/main');
+    } else {
+      alert("Please ensure all form fields are valid.");
     }
   };
 
@@ -178,7 +165,7 @@ const SignUpForm = ({ handleClose, handleSignUp }) => {
       <ValidationMessage>Passwords must match.</ValidationMessage>
 
       <div>
-        <Button variant="contained" sx={{ margin: "2rem" }} onClick={handleClose}>
+        <Button variant="contained" sx={{ margin: "2rem" }} onClick={() => navigate('/')}>
           Cancel
         </Button>
         <Button
