@@ -3,6 +3,7 @@ import { Button, Card, Typography, LinearProgress, Box, IconButton } from '@mui/
 import { makeStyles } from '@mui/styles';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import QuestionCard from './QuestionCard';  // Import the reusable component
 
 // Example data for questions and classes
 const exampleClasses = [
@@ -218,13 +219,15 @@ const Mainscreen = () => {
       <Typography variant="h6" className="mb-3 text-black">
         Recent Questions:
       </Typography>
+
+      {/* Use the reusable QuestionCard component */}
       {exampleQuestions.map((question) => (
-        <Card key={question.id} className="p-4 mb-4 bg-white text-black">
-          <Typography>{question.text}</Typography>
-          <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-            Class: {question.class} | Answers: {question.answers}
-          </Typography>
-        </Card>
+        <QuestionCard
+          key={question.id}
+          text={question.text}
+          className={question.class}
+          answers={question.answers}
+        />
       ))}
     </div>
   );
