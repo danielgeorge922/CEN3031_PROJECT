@@ -1,18 +1,18 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from dotenv import dotenv_values
+from fastapi.security import OAuth2PasswordBearer
 
 import jwt
 from passlib.context import CryptContext
 
 config = dotenv_values(".env")
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
 ALGORITHM = "HS256"
-
 
 def create_access_token(subject: str | Any, expires_delta: timedelta):
     expire = datetime.now(timezone.utc) + expires_delta

@@ -4,14 +4,8 @@ from pydantic import EmailStr, BaseModel, Field
 from sqlmodel import Relationship
 
 class UserBase(BaseModel):
-    email: EmailStr 
-    username: str
+    email: EmailStr     
     
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-    
-    
-class UserRegister(UserBase):
+class UserLog(UserBase):
     password: str
     

@@ -1,21 +1,9 @@
 from fastapi import FastAPI, Depends
-from enum import Enum
-from typing import Annotated
-from sqlalchemy.orm import Session
+from app.db.database import get_db, Base, engine
+from app.api.main import api_router
 
-from db.database import SesionLocal, engine
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-def get_db():
-    db = SesionLocal
-    
-    try:
-        yield db
-    finally:
-        db.close()
-        
-db_dependency = Annotated[Session, Depends(get_db)]
-        
-
+app.include_router(api_router, dependencies=[Depends(get_db)])
