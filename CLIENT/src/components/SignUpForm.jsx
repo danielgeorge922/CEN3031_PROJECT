@@ -40,10 +40,8 @@ const SignUpForm = () => {
     // If form validation passes, navigate to the main page
     if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
       // Navigate to /main after successful form validation
-      fetch("http://localhost:3000", {method: 'POST', headers: {'Content-Type': 'application/json'},
+      fetch("http://127.0.0.1:8000/users/register", {method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        first_name : firstName,
-        last_name : lastName,
         email: email,
         password: password
       })

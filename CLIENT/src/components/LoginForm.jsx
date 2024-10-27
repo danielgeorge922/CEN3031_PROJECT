@@ -15,7 +15,7 @@ const LoginForm = ({ handleClose, handleLogin }) => {
 
     // Pass user data to the parent component or store it locally for later use
     const userData = { email, password };
-    fetch("http://localhost:3000", {
+    fetch("http://127.0.0.1:8000/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
