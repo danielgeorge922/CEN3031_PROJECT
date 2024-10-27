@@ -40,8 +40,27 @@ const SignUpForm = () => {
     // If form validation passes, navigate to the main page
     if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
       // Navigate to /main after successful form validation
+      fetch("http://localhost:3000", {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        first_name : firstName,
+        last_name : lastName,
+        email: email,
+        password: password
+      })
+    })
+    .then(response => {
+      if (response.ok)
+        return response.json();
+    })
+    .then(result => {
+      console.log(result);
+      if (result) {
+        alert('Account created successfully!');
+      }
       navigate('/main');
-    } else {
+    })
+    }
+     else {
       alert("Please ensure all form fields are valid.");
     }
   };
