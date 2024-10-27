@@ -15,9 +15,24 @@ const LoginForm = ({ handleClose, handleLogin }) => {
 
     // Pass user data to the parent component or store it locally for later use
     const userData = { email, password };
-    handleLogin(userData); // This would eventually send data to the backend
+    fetch("http://localhost:3000", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+    .then((response) => {
+      if (response.ok)
+        {
+          return response.json();
+        }
+    })
+    .then((data)=> {
+      console.log("Login Successful: ", data)
+      handleClose(); // Close the form after submission
+    }) // This would eventually send data to the backend
 
-    handleClose(); // Close the form after submission
   };
 
   return (
