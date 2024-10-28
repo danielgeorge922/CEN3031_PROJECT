@@ -34,31 +34,25 @@ const SignUpForm = () => {
   const isValidPassword = password && passwordRegex.test(password);
   const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // If form validation passes, navigate to the main page
     if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
       // Navigate to /main after successful form validation
-      fetch("http://127.0.0.1:8000/users/register", {method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
+      const response = await axios.post("http://127.0.0.1:8000/users/register", {
         email: email,
-        password: password
-      })
-    })
-    .then(response => {
-      if (response.ok)
-        return response.json();
-    })
-    .then(result => {
-      console.log(result);
-      if (result) {
+        password: password,
+      });
+
+    if (response.status == 200 || response.status == 201)
+      {
         alert('Account created successfully!');
+        navigate('/main');
       }
-      navigate('/main');
-    })
     }
-     else {
+    
+    else {
       alert("Please ensure all form fields are valid.");
     }
   };
