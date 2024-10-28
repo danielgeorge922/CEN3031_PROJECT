@@ -26,8 +26,7 @@ const LoginForm = ({ handleClose, handleLogin }) => {
     else{
       setError("Login failed. Please try again");
     }
-
-    }
+    
   };
 
   return (
