@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Button, styled, TextField } from "@mui/material";
+import axios from "axios";
 
 const StyledTextField = styled(TextField)({
   margin: "1rem",
@@ -15,24 +16,18 @@ const LoginForm = ({ handleClose, handleLogin }) => {
 
     // Pass user data to the parent component or store it locally for later use
     const userData = { email, password };
-    fetch("http://127.0.0.1:8000/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    })
-    .then((response) => {
-      if (response.ok)
-        {
-          return response.json();
-        }
-    })
-    .then((data)=> {
-      console.log("Login Successful: ", data)
-      handleClose(); // Close the form after submission
-    }) // This would eventually send data to the backend
+    const response = await axios.post("http://127.0.0.1:8000/users/login", userData);
+  
+    if (response.status == 200 || response.status == 201)
+      {
+        handleLogin(response.data);
+        handleClose(); // Close the form after submission
+      }
+    else{
+      setError("Login failed. Please try again");
+    }
 
+    }
   };
 
   return (
