@@ -8,4 +8,13 @@ class UserBase(BaseModel):
     
 class UserLog(UserBase):
     password: str
+
+
+class QuestionBase(BaseModel):
+    question: str
+    
+class QuestionCreate(QuestionBase):
+    class_code: str
+    user: UserBase
+    
     
