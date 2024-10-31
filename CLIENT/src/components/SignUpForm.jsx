@@ -36,27 +36,34 @@ const SignUpForm = () => {
   const doPasswordsMatch = password && confirmPassword && password === confirmPassword;
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // If form validation passes, navigate to the main page
-    if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
-      // Navigate to /main after successful form validation
-      const response = await axios.post("http://127.0.0.1:8000/users/register", {
+  if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/register", {
         email: email,
         password: password,
       });
 
-    if (response.status == 200 || response.status == 201)
-      {
+      if (response.status === 200 || response.status === 201) {
         alert('Account created successfully!');
         navigate('/main');
+      } else {
+        // Handle unexpected status codes here
+        alert("Unexpected error occurred. Please try again.");
+      }
+    } catch (error) {
+      // Display the error message returned by the backend
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.detail || "User already registered.");
+      } else {
+        alert("Error occurred during signup. Please try again.");
       }
     }
-    
-    else {
-      alert("Please ensure all form fields are valid.");
-    }
-  };
+  } else {
+    alert("Please ensure all form fields are valid.");
+  }
+};
 
   return (
     <form
