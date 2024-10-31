@@ -8,7 +8,10 @@ class UserBase(BaseModel):
     
 class UserLog(UserBase):
     password: str
-
+    
+class UserRegister(UserLog):
+    first_name: str
+    last_name: str
 
 class QuestionBase(BaseModel):
     question: str

@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import get_db, Base, engine
 from app.api.main import api_router
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 origins = ['http://localhost:3000']
