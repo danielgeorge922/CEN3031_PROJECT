@@ -16,9 +16,38 @@ const exampleClasses = [
 // Example questions data
 const exampleQuestions = [
   { id: 1, text: 'How do you solve this equation in Math 101?', class: 'Math 101', answers: 3 },
-  { id: 2, text: 'Can someone explain the history timeline from 1800 to 1900?', class: 'History 202', answers: 2 },
-  { id: 3, text: 'What are the laws of thermodynamics?', class: 'Physics 303', answers: 5 },
+  { id: 2, text: 'What is the derivative of a function in Math 101?', class: 'Math 101', answers: 4 },
+  { id: 3, text: 'How do you apply the quadratic formula in Math 101?', class: 'Math 101', answers: 2 },
+  
+  { id: 4, text: 'Can someone explain the history timeline from 1800 to 1900?', class: 'History 202', answers: 2 },
+  { id: 5, text: 'What were the causes of World War I in History 202?', class: 'History 202', answers: 5 },
+  { id: 6, text: 'What impact did the Renaissance have on modern history in History 202?', class: 'History 202', answers: 3 },
+  
+  { id: 7, text: 'What are the laws of thermodynamics in Physics 303?', class: 'Physics 303', answers: 5 },
+  { id: 8, text: 'How does Newton’s third law apply in Physics 303?', class: 'Physics 303', answers: 3 },
+  { id: 9, text: 'Can someone explain electromagnetism concepts in Physics 303?', class: 'Physics 303', answers: 4 },
+  
+  { id: 10, text: 'What are the basic principles of chemical bonding in Chemistry 404?', class: 'Chemistry 404', answers: 3 },
+  { id: 11, text: 'How does the periodic table organize elements in Chemistry 404?', class: 'Chemistry 404', answers: 4 },
+  { id: 12, text: 'Can someone explain the concept of moles in Chemistry 404?', class: 'Chemistry 404', answers: 5 },
+  
+  { id: 13, text: 'What is the structure of DNA in Biology 505?', class: 'Biology 505', answers: 2 },
+  { id: 14, text: 'How does photosynthesis work in Biology 505?', class: 'Biology 505', answers: 4 },
+  { id: 15, text: 'Can someone explain the theory of evolution in Biology 505?', class: 'Biology 505', answers: 3 },
+  
+  { id: 16, text: 'What are the basics of programming in Computer Science 606?', class: 'Computer Science 606', answers: 3 },
+  { id: 17, text: 'Can someone explain data structures in Computer Science 606?', class: 'Computer Science 606', answers: 5 },
+  { id: 18, text: 'How does recursion work in Computer Science 606?', class: 'Computer Science 606', answers: 2 },
+  
+  { id: 19, text: 'What are the major themes in Shakespeare’s works in English 707?', class: 'English 707', answers: 4 },
+  { id: 20, text: 'Can someone explain the structure of a sonnet in English 707?', class: 'English 707', answers: 3 },
+  { id: 21, text: 'How do you analyze literary symbols in English 707?', class: 'English 707', answers: 5 },
+  
+  { id: 22, text: 'What are the stages of cognitive development in Psychology 808?', class: 'Psychology 808', answers: 4 },
+  { id: 23, text: 'Can someone explain the basics of behavioral conditioning in Psychology 808?', class: 'Psychology 808', answers: 2 },
+  { id: 24, text: 'How does memory function in the brain in Psychology 808?', class: 'Psychology 808', answers: 5 },
 ];
+
 
 // Custom makeStyles for styling
 const useStyles = makeStyles({
@@ -99,7 +128,7 @@ const useStyles = makeStyles({
   },
 });
 
-// Gradient Progress Bar Component
+
 const GradientProgressBar = ({ value }) => {
   const classes = useStyles({ value });
 
@@ -161,7 +190,7 @@ const Mainscreen = () => {
   };
 
   return (
-    <div className="p-6" style={{ background: 'linear-gradient(to bottom right, #f3e5f5, #e1bee7)', minHeight: '100vh' }}>
+    <div className="p-6" style={{ background: '#f9f9f9', minHeight: '100vh' }}>
       {/* Title Card */}
       <Card className={classes.titleCard}>
         <Typography className={classes.titleText}>
@@ -183,6 +212,7 @@ const Mainscreen = () => {
 
         {/* Class Cards */}
         <div className="flex justify-center">
+          
           {pagedClasses.map((className, index) => (
             <Card key={index} className={classes.classCard}>
               <Typography>{className}</Typography>
@@ -219,16 +249,19 @@ const Mainscreen = () => {
       <Typography variant="h6" className="mb-3 text-black">
         Recent Questions:
       </Typography>
-
-      {/* Use the reusable QuestionCard component */}
-      {exampleQuestions.map((question) => (
-        <QuestionCard
-          key={question.id}
-          text={question.text}
-          className={question.class}
-          answers={question.answers}
-        />
-      ))}
+      <div className="flex justify-center p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 items-center">
+          {exampleQuestions.map((question) => (
+            <QuestionCard
+              key={question.id}
+              text={question.text}
+              className={question.class}
+              answers={question.answers}
+            />
+          ))}
+        </div>
+      </div>
+      
     </div>
   );
 };

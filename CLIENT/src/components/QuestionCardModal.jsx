@@ -1,75 +1,44 @@
-// import React, { useState } from 'react';
-// import { Card, Typography, IconButton, Avatar, Box } from '@mui/material';
-// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-// import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-// import { makeStyles } from '@mui/styles';
-// import QuestionCardModal from './QuestionCardModal';  // Import the modal component
+import React from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography
+} from '@mui/material';
 
-// // Custom styles using makeStyles for hover effect
-// const useStyles = makeStyles({
-//   questionTitle: {
-//     fontWeight: 'bold',
-//     fontSize: '1.1rem',
-//     cursor: 'pointer',
-//     '&:hover': {
-//       color: '#1e90ff',  // Change color to blue on hover
-//       textDecoration: 'underline',  // Underline on hover
-//     },
-//   },
-// });
+const QuestionCardModal = ({ open, onClose, text, className, answers }) => {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        style: {
+          width: '90vw',
+          height: '90vh',
+        },
+      }}
+    >
+      <DialogTitle>{className} - Question Details</DialogTitle>
+      <DialogContent>
+        <Typography variant="h6" gutterBottom>
+          {text}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'gray' }}>
+          Answers: {answers}
+        </Typography>
+        {/* Additional content or answers can go here */}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
-// const QuestionCard = ({ text, className, answers, profilePic, onUpvote, onDownvote }) => {
-//   const [openModal, setOpenModal] = useState(false);  // State to control the modal
-//   const classes = useStyles();  // Use the custom styles
-
-//   const handleOpenModal = () => {
-//     setOpenModal(true);  // Open modal
-//   };
-
-//   const handleCloseModal = () => {
-//     setOpenModal(false);  // Close modal
-//   };
-
-//   return (
-//     <>
-//       {/* Question Card */}
-//       <Card className="p-4 mb-4 bg-white text-black" sx={{ display: 'flex', alignItems: 'center' }}>
-//         {/* Avatar for Profile Picture */}
-//         <Avatar src={profilePic} alt="Profile Picture" sx={{ mr: 2 }} />
-
-//         {/* Box to wrap the text content */}
-//         <Box sx={{ flexGrow: 1 }}>
-//           {/* Clickable Question Text with hover effect */}
-//           <Typography onClick={handleOpenModal} className={classes.questionTitle}>
-//             {text}
-//           </Typography>
-//           <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-//             Class: {className} | Answers: {answers}
-//           </Typography>
-//         </Box>
-
-//         {/* Upvote/Downvote Buttons */}
-//         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//           <IconButton onClick={onUpvote} sx={{ color: '#4caf50' }}> {/* Upvote Button */}
-//             <ThumbUpIcon />
-//           </IconButton>
-
-//           <IconButton onClick={onDownvote} sx={{ color: '#f44336' }}> {/* Downvote Button */}
-//             <ThumbDownIcon />
-//           </IconButton>
-//         </Box>
-//       </Card>
-
-//       {/* Use the modal component */}
-//       <QuestionCardModal
-//         open={openModal}
-//         onClose={handleCloseModal}
-//         text={text}
-//         className={className}
-//         answers={answers}
-//       />
-//     </>
-//   );
-// };
-
-// export default QuestionCard;
+export default QuestionCardModal;
