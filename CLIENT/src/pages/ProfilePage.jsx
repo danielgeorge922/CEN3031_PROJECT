@@ -1,8 +1,8 @@
 import React from 'react';
 import Sidebar from '../components/Sidebar';
-import Mainscreen from '../components/Mainscreen';
+import Profile from '../components/Profile';
 
-const Mainpage = () => {
+const ProfilePage = () => {
   return (
     <div className="flex">
 
@@ -11,11 +11,13 @@ const Mainpage = () => {
       </div>
 
 
-      <div className="flex-1">
-        <Profile />
+      <div className="p-4 flex-1">
+        <div className='bg-[#f3f4f6] rounded-xl h-[97vh] p-4'>
+          <Profile />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Mainpage;
+export default ProfilePage;
