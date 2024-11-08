@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Box,
   IconButton,
+  Avatar
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -253,21 +254,55 @@ const useStyles = makeStyles({
 });
 
 const GradientProgressBar = ({ value }) => {
-  const classes = useStyles({ value });
-
   return (
-    <Box sx={{ width: "100%", mt: 2 }}>
-      <Typography variant="h6" className="text-black">
-        Your Progress: {value}%
-      </Typography>
-      <LinearProgress
-        classes={{ root: classes.root, bar: classes.bar }}
-        variant="determinate"
-        value={value}
-      />
+    <Box sx={{ width: '100%', mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Progress Text and Bar */}
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#000', // Black text color
+            fontFamily: 'Poppins, sans-serif',
+            fontWeight: 'bold',
+            textAlign: 'center', // Center text within the box
+          }}
+        >
+          Your Progress: {value}%
+        </Typography>
+        <LinearProgress
+          variant="determinate"
+          value={value}
+          sx={{
+            height: '12px', // Thicker bar
+            borderRadius: '6px',
+            backgroundColor: '#e0e0e0', // Background color for the track
+            paddingTop: '8px', // Y-padding on top
+            paddingBottom: '8px', // Y-padding on bottom
+            '& .MuiLinearProgress-bar': {
+              borderRadius: '6px',
+              backgroundImage: 'linear-gradient(90deg, #4caf50, #81c784)', // Gradient for the progress bar
+            },
+          }}
+        />
+      </Box>
+
+      {/* Enlarged Trophy Icon */}
+      <Avatar
+        sx={{
+          bgcolor: 'gold',
+          width: 60, // 100% larger (originally 30px, now 60px)
+          height: 60,
+          fontSize: 32, // Increase font size to fit larger icon
+          boxShadow: '0 0 8px 4px rgba(255, 215, 0, 0.8), 0 0 12px 6px rgba(255, 215, 0, 0.5)',
+          marginLeft: '16px', // Space between progress bar and icon
+        }}
+      >
+        🏆
+      </Avatar>
     </Box>
   );
 };
+
 
 const Mainscreen = () => {
   const classes = useStyles();

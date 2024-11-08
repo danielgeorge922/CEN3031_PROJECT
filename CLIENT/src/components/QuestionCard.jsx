@@ -5,45 +5,43 @@ import {
   IconButton,
   Avatar,
   Box,
+  CircularProgress,
 } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { styled } from '@mui/material/styles';
-import QuestionCardModal from './QuestionCardModal'; // Import the new modal component
+import QuestionCardModal from './QuestionCardModal';
 
 const StyledCard = styled(Card)({
-  width: '100%', // Take up the width of the container
+  width: '100%',
   padding: '1rem',
-  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Subtle shadow for paper effect
-  transition: 'transform 0.2s ease-in-out', // Smooth transition for scaling
-  cursor: 'pointer', // Change cursor to pointer on hover
+  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+  transition: 'transform 0.2s ease-in-out',
+  cursor: 'pointer',
   '&:hover': {
-    transform: 'scale(1.05)', // Scale up slightly on hover
-    boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)', // Slightly larger shadow on hover
+    transform: 'scale(1.05)',
+    boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
   },
 });
 
 const getClassColor = (className) => {
   switch (className) {
-    case 'Math 101':
-      return '#1E40AF'; // Blue for Math 101
-    case 'History 202':
-      return '#3B82F6'; // Lighter Blue for History 202
-    case 'Physics 303':
-      return '#6366F1'; // Indigo for Physics 303
-    case 'Chemistry 404':
-      return '#6D28D9'; // Purple for Chemistry 404
-    case 'Biology 505':
-      return '#10B981'; // Green for Biology 505
-    case 'Computer Science 606':
-      return '#22C55E'; // Light Green for Computer Science 606
-    case 'English 707':
-      return '#EF4444'; // Red for English 707
-    case 'Psychology 808':
-      return '#F97316'; // Orange for Psychology 808
-    default:
-      return '#9e9e9e'; // Gray for other classes
+    case 'Math 101': return '#1E40AF';
+    case 'History 202': return '#3B82F6';
+    case 'Physics 303': return '#6366F1';
+    case 'Chemistry 404': return '#6D28D9';
+    case 'Biology 505': return '#10B981';
+    case 'Computer Science 606': return '#22C55E';
+    case 'English 707': return '#EF4444';
+    case 'Psychology 808': return '#F97316';
+    default: return '#9e9e9e';
   }
+};
+
+const getPieColor = (percentage) => {
+  if (percentage < 40) return '#f44336'; // Red
+  if (percentage < 70) return '#ffeb3b'; // Yellow
+  return '#4caf50'; // Green
 };
 
 const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
@@ -69,6 +67,10 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
     setDownvotes(downvotes + 1);
   };
 
+  const totalVotes = upvotes + downvotes;
+  const likePercentage = totalVotes > 0 ? (upvotes / totalVotes) * 100 : 0;
+  const pieColor = getPieColor(likePercentage);
+
   return (
     <>
       <StyledCard onClick={handleOpen}>
@@ -88,31 +90,92 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
           </Box>
         </Box>
 
-        <Typography
-          sx={{
-            fontWeight: 'bold',
-            cursor: 'pointer',
-          }}
-        >
+        <Typography sx={{ fontWeight: 'bold', cursor: 'pointer' }}>
           {text}
         </Typography>
         <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
           Answers: {answers}
         </Typography>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-          <IconButton onClick={handleUpvote} sx={{ color: '#4caf50' }}>
-            <ThumbUpIcon />
-          </IconButton>
-          <Typography variant="body2" sx={{ mr: 2 }}>
-            {upvotes}
-          </Typography>
-          <IconButton onClick={handleDownvote} sx={{ color: '#f44336' }}>
-            <ThumbDownIcon />
-          </IconButton>
-          <Typography variant="body2">
-            {downvotes}
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
+          {/* Upvote/Downvote Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={handleUpvote} sx={{ color: '#4caf50' }}>
+              <ThumbUpIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ mr: 2 }}>
+              {upvotes}
+            </Typography>
+            <IconButton onClick={handleDownvote} sx={{ color: '#f44336' }}>
+              <ThumbDownIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ mr: 2 }}>
+              {downvotes}
+            </Typography>
+          </Box>
+
+          {/* Mini Pie Chart or Gray Circle if No Votes */}
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            {totalVotes > 0 ? (
+              <>
+                <CircularProgress
+                  variant="determinate"
+                  value={likePercentage}
+                  size={40}
+                  thickness={5}
+                  sx={{ color: pieColor }}
+                />
+                <Box
+                  sx={{
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 'bold',
+                    color: pieColor,
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {Math.round(likePercentage)}
+                  </Typography>
+                </Box>
+              </>
+            ) : (
+              <>
+                <CircularProgress
+                  variant="determinate"
+                  value={100}
+                  size={40}
+                  thickness={5}
+                  sx={{ color: '#9e9e9e' }} // Gray color for no votes
+                />
+                <Box
+                  sx={{
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 'bold',
+                    color: '#9e9e9e',
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                    -
+                  </Typography>
+                </Box>
+              </>
+            )}
+          </Box>
         </Box>
       </StyledCard>
 
