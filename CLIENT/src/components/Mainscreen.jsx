@@ -212,7 +212,7 @@ const useStyles = makeStyles({
   classCard: {
     padding: "10px",
     margin: "0 10px",
-    minWidth: "150px",
+ 
     textAlign: "center",
     cursor: "pointer",
     background: "linear-gradient(45deg, #2b6dd6, #9c64f4)",
@@ -392,7 +392,7 @@ const Mainscreen = () => {
         Recent Questions:
       </Typography>
       <div className="flex justify-center p-4 px-[100px]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-center">
           {exampleQuestions.map((question) => (
             <QuestionCard
               key={question.id}
