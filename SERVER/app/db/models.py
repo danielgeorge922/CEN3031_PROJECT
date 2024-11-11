@@ -1,22 +1,19 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy import Table
 from sqlalchemy.orm import relationship
 from app.db.database import Base
-
 
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=True)
-    email = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False, index=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
     questions = relationship("Question", back_populates="user")
     answers = relationship("Answer", back_populates="user")
-    
-    
-    
+
 class Class(Base):
     __tablename__ = 'classes'
     id = Column(Integer, primary_key=True, index=True)
@@ -24,16 +21,7 @@ class Class(Base):
     description = Column(String)
 
     questions = relationship("Question", back_populates="class_")
-    
 
-user_classes = Table(
-    'user_classes',
-    Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('class_id', Integer, ForeignKey('classes.id'), primary_key=True)
-)
-    
-    
 class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True, index=True)
@@ -43,11 +31,10 @@ class Question(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     is_answered = Column(Boolean, default=False)
 
-    user = relationship("User", back_populates="questions")
     class_ = relationship("Class", back_populates="questions")
+    user = relationship("User", back_populates="questions")
     answers = relationship("Answer", back_populates="question")
-    
-    
+
 class Answer(Base):
     __tablename__ = 'answers'
     id = Column(Integer, primary_key=True, index=True)

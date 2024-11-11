@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import get_db, Base, engine
 from app.api.main import api_router
-
-Base.metadata.create_all(bind=engine)
+from app.api.routes import users
 
 app = FastAPI()
 
@@ -19,3 +18,4 @@ app.add_middleware(
 )
 
 app.include_router(api_router, dependencies=[Depends(get_db)])
+app.include_router(users.router, prefix="/users", tags=["users"])
