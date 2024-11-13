@@ -1,75 +1,115 @@
-// import React, { useState } from 'react';
-// import { Card, Typography, IconButton, Avatar, Box } from '@mui/material';
-// import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-// import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-// import { makeStyles } from '@mui/styles';
-// import QuestionCardModal from './QuestionCardModal';  // Import the modal component
+import React from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+  Box,
+  Avatar,
+  TextField,
+} from '@mui/material';
+import AnswerCard from './AnswerCard';
 
-// // Custom styles using makeStyles for hover effect
-// const useStyles = makeStyles({
-//   questionTitle: {
-//     fontWeight: 'bold',
-//     fontSize: '1.1rem',
-//     cursor: 'pointer',
-//     '&:hover': {
-//       color: '#1e90ff',  // Change color to blue on hover
-//       textDecoration: 'underline',  // Underline on hover
-//     },
-//   },
-// });
+const QuestionCardModal = ({ open, onClose, text, className }) => {
+  // Dummy answers data for testing
+  const answers = [
+    {
+      userProfile: { name: 'Alice Johnson', picture: undefined },
+      text: 'This is a great question! Here’s my take on it...',
+      upvotes: 5,
+      downvotes: 2,
+      replies: [
+        { userProfile: { name: 'Bob Smith', picture: undefined }, text: 'I agree with this answer!' },
+      ],
+    },
+    {
+      userProfile: { name: 'Chris Evans', picture: undefined },
+      text: 'I have a different perspective on this. Here’s what I think...',
+      upvotes: 3,
+      downvotes: 1,
+      replies: [],
+    },
+    {
+      userProfile: { name: 'Dana White', picture: undefined },
+      text: 'Thank you for asking this! I think the answer is...',
+      upvotes: 8,
+      downvotes: 0,
+      replies: [
+        { userProfile: { name: 'Ellen Park', picture: undefined }, text: 'Very insightful, thank you!' },
+        { userProfile: { name: 'Frank Lee', picture: undefined }, text: 'I learned a lot from this answer.' },
+      ],
+    },
+  ];
 
-// const QuestionCard = ({ text, className, answers, profilePic, onUpvote, onDownvote }) => {
-//   const [openModal, setOpenModal] = useState(false);  // State to control the modal
-//   const classes = useStyles();  // Use the custom styles
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{
+        style: {
+          width: '90vw',
+          height: '90vh',
+        },
+      }}
+    >
+      <DialogTitle>{className} - Question Details</DialogTitle>
+      <DialogContent>
+        {/* User Info Section with Default Values */}
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Avatar
+            src={undefined} // No src provided to show blank avatar
+            alt="User Profile"
+            sx={{ width: 50, height: 50, mr: 2 }}
+          />
+          <Typography variant="h6">Anonymous User</Typography> {/* Default name */}
+        </Box>
 
-//   const handleOpenModal = () => {
-//     setOpenModal(true);  // Open modal
-//   };
+        {/* Question Content */}
+        <Typography variant="h6" gutterBottom>
+          {text}
+        </Typography>
 
-//   const handleCloseModal = () => {
-//     setOpenModal(false);  // Close modal
-//   };
+        {/* Answers Section */}
+        <Typography variant="body2" sx={{ color: 'gray', mb: 2 }}>
+          Answers
+        </Typography>
 
-//   return (
-//     <>
-//       {/* Question Card */}
-//       <Card className="p-4 mb-4 bg-white text-black" sx={{ display: 'flex', alignItems: 'center' }}>
-//         {/* Avatar for Profile Picture */}
-//         <Avatar src={profilePic} alt="Profile Picture" sx={{ mr: 2 }} />
+        {/* Render answers */}
+        {answers.length > 0 ? (
+          answers.map((answer, index) => (
+            <AnswerCard key={index} answer={answer} />
+          ))
+        ) : (
+          <Typography variant="body2" sx={{ color: 'gray' }}>
+            No answers yet.
+          </Typography>
+        )}
 
-//         {/* Box to wrap the text content */}
-//         <Box sx={{ flexGrow: 1 }}>
-//           {/* Clickable Question Text with hover effect */}
-//           <Typography onClick={handleOpenModal} className={classes.questionTitle}>
-//             {text}
-//           </Typography>
-//           <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-//             Class: {className} | Answers: {answers}
-//           </Typography>
-//         </Box>
+        {/* New Answer Input */}
+        <Box sx={{ mt: 3 }}>
+          <TextField
+            label="Add a new answer"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={3}
+          />
+          <Button color="primary" variant="contained" sx={{ mt: 2 }}>
+            Submit Answer
+          </Button>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
-//         {/* Upvote/Downvote Buttons */}
-//         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//           <IconButton onClick={onUpvote} sx={{ color: '#4caf50' }}> {/* Upvote Button */}
-//             <ThumbUpIcon />
-//           </IconButton>
-
-//           <IconButton onClick={onDownvote} sx={{ color: '#f44336' }}> {/* Downvote Button */}
-//             <ThumbDownIcon />
-//           </IconButton>
-//         </Box>
-//       </Card>
-
-//       {/* Use the modal component */}
-//       <QuestionCardModal
-//         open={openModal}
-//         onClose={handleCloseModal}
-//         text={text}
-//         className={className}
-//         answers={answers}
-//       />
-//     </>
-//   );
-// };
-
-// export default QuestionCard;
+export default QuestionCardModal;

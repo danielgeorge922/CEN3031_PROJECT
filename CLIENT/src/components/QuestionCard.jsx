@@ -1,86 +1,192 @@
 import React, { useState } from 'react';
-import { Card, Typography, IconButton, Avatar, Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+  Card,
+  Typography,
+  IconButton,
+  Avatar,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
+import QuestionCardModal from './QuestionCardModal';
 
-// Custom styles using makeStyles for hover effect and modal
-const useStyles = makeStyles({
-  questionTitle: {
-    fontWeight: 'bold',
-    fontSize: '1.1rem',
-    cursor: 'pointer',
-    '&:hover': {
-      color: '#1e90ff',  // Change color to blue on hover
-      textDecoration: 'underline',  // Underline on hover
-    },
-  },
-  customDialog: {
-    width: '90vw',  // 90% width of the viewport
-    height: '90vh',  // 90% height of the viewport
-    maxWidth: 'none',  // Override default maxWidth to allow custom size
-    padding: '2rem',  // Add padding inside the modal
+const StyledCard = styled(Card)({
+  width: '100%',
+  padding: '1rem',
+  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+  transition: 'transform 0.2s ease-in-out',
+  cursor: 'pointer',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
   },
 });
 
-const QuestionCard = ({ text, className, answers, profilePic, onUpvote, onDownvote }) => {
-  const [open, setOpen] = useState(false);  // State to control the modal
-  const classes = useStyles();  // Use the custom styles
+const getClassColor = (className) => {
+  switch (className) {
+    case 'Math 101': return '#1E40AF';
+    case 'History 202': return '#3B82F6';
+    case 'Physics 303': return '#6366F1';
+    case 'Chemistry 404': return '#6D28D9';
+    case 'Biology 505': return '#10B981';
+    case 'Computer Science 606': return '#22C55E';
+    case 'English 707': return '#EF4444';
+    case 'Psychology 808': return '#F97316';
+    default: return '#9e9e9e';
+  }
+};
+
+const getPieColor = (percentage) => {
+  if (percentage < 40) return '#f44336'; // Red
+  if (percentage < 70) return '#ffeb3b'; // Yellow
+  return '#4caf50'; // Green
+};
+
+const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
+  const [open, setOpen] = useState(false);
+  const [upvotes, setUpvotes] = useState(upvoteCount);
+  const [downvotes, setDownvotes] = useState(downvoteCount);
 
   const handleOpen = () => {
-    setOpen(true);  // Open modal
+    setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false);  // Close modal
+    setOpen(false);
   };
+
+  const handleUpvote = (event) => {
+    event.stopPropagation();
+    setUpvotes(upvotes + 1);
+  };
+
+  const handleDownvote = (event) => {
+    event.stopPropagation();
+    setDownvotes(downvotes + 1);
+  };
+
+  const totalVotes = upvotes + downvotes;
+  const likePercentage = totalVotes > 0 ? (upvotes / totalVotes) * 100 : 0;
+  const pieColor = getPieColor(likePercentage);
 
   return (
     <>
-      {/* Question Card */}
-      <Card className="flex p-4 mb-4 bg-white text-black" sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* Avatar for Profile Picture */}
-        <Avatar src={profilePic} alt="Profile Picture" sx={{ mr: 2 }} />
-
-        {/* Box to wrap the text content */}
-        <Box sx={{ flexGrow: 1 }}>
-          {/* Clickable Question Text with hover effect */}
-          <Typography onClick={handleOpen} className={classes.questionTitle}>
-            {text}
-          </Typography>
-          <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-            Class: {className} | Answers: {answers}
-          </Typography>
+      <StyledCard onClick={handleOpen}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Avatar src={profilePic} alt="User Profile" sx={{ width: 40, height: 40, mr: 2 }} />
+          <Box
+            sx={{
+              backgroundColor: getClassColor(className),
+              color: 'white',
+              padding: '0.3rem 0.8rem',
+              borderRadius: '16px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}
+          >
+            {className}
+          </Box>
         </Box>
 
-        {/* Upvote/Downvote Buttons */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={onUpvote} sx={{ color: '#4caf50' }}> {/* Upvote Button */}
-            <ThumbUpIcon />
-          </IconButton>
+        <Typography sx={{ fontWeight: 'bold', cursor: 'pointer' }}>
+          {text}
+        </Typography>
+        <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
+          Answers: {answers}
+        </Typography>
 
-          <IconButton onClick={onDownvote} sx={{ color: '#f44336' }}> {/* Downvote Button */}
-            <ThumbDownIcon />
-          </IconButton>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
+          {/* Upvote/Downvote Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton onClick={handleUpvote} sx={{ color: '#4caf50' }}>
+              <ThumbUpIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ mr: 2 }}>
+              {upvotes}
+            </Typography>
+            <IconButton onClick={handleDownvote} sx={{ color: '#f44336' }}>
+              <ThumbDownIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ mr: 2 }}>
+              {downvotes}
+            </Typography>
+          </Box>
+
+          {/* Mini Pie Chart or Gray Circle if No Votes */}
+          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+            {totalVotes > 0 ? (
+              <>
+                <CircularProgress
+                  variant="determinate"
+                  value={likePercentage}
+                  size={40}
+                  thickness={5}
+                  sx={{ color: pieColor }}
+                />
+                <Box
+                  sx={{
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 'bold',
+                    color: pieColor,
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {Math.round(likePercentage)}
+                  </Typography>
+                </Box>
+              </>
+            ) : (
+              <>
+                <CircularProgress
+                  variant="determinate"
+                  value={100}
+                  size={40}
+                  thickness={5}
+                  sx={{ color: '#9e9e9e' }} // Gray color for no votes
+                />
+                <Box
+                  sx={{
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    position: 'absolute',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 'bold',
+                    color: '#9e9e9e',
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontFamily: 'Poppins, sans-serif' }}>
+                    -
+                  </Typography>
+                </Box>
+              </>
+            )}
+          </Box>
         </Box>
-      </Card>
+      </StyledCard>
 
-      {/* Modal (Dialog) with 90% width and height */}
-      <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.customDialog }}>
-        <DialogTitle>Question Details</DialogTitle>
-        <DialogContent>
-          <Typography>{text}</Typography>
-          <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-            Class: {className} | Answers: {answers}
-          </Typography>
-          {/* You can add more detailed content here, like additional answers or comments */}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* QuestionCardModal Component */}
+      <QuestionCardModal
+        open={open}
+        onClose={handleClose}
+        text={text}
+        className={className}
+        answers={answers}
+      />
     </>
   );
 };
