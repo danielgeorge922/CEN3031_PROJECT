@@ -48,6 +48,8 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
   const [open, setOpen] = useState(false);
   const [upvotes, setUpvotes] = useState(upvoteCount);
   const [downvotes, setDownvotes] = useState(downvoteCount);
+  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [isDownvoted, setIsDownvoted] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -59,12 +61,36 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
 
   const handleUpvote = (event) => {
     event.stopPropagation();
-    setUpvotes(upvotes + 1);
+    if (isUpvoted) {
+      // If already upvoted, remove the upvote
+      setUpvotes(upvotes - 1);
+      setIsUpvoted(false);
+    } else {
+      // If not upvoted, add an upvote and remove any active downvote
+      setUpvotes(upvotes + 1);
+      setIsUpvoted(true);
+      if (isDownvoted) {
+        setDownvotes(downvotes - 1);
+        setIsDownvoted(false);
+      }
+    }
   };
 
   const handleDownvote = (event) => {
     event.stopPropagation();
-    setDownvotes(downvotes + 1);
+    if (isDownvoted) {
+      // If already downvoted, remove the downvote
+      setDownvotes(downvotes - 1);
+      setIsDownvoted(false);
+    } else {
+      // If not downvoted, add a downvote and remove any active upvote
+      setDownvotes(downvotes + 1);
+      setIsDownvoted(true);
+      if (isUpvoted) {
+        setUpvotes(upvotes - 1);
+        setIsUpvoted(false);
+      }
+    }
   };
 
   const totalVotes = upvotes + downvotes;
@@ -100,13 +126,13 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
           {/* Upvote/Downvote Section */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={handleUpvote} sx={{ color: '#4caf50' }}>
+            <IconButton onClick={handleUpvote} sx={{ color: isUpvoted ? '#4caf50' : '#9e9e9e' }}>
               <ThumbUpIcon />
             </IconButton>
             <Typography variant="body2" sx={{ mr: 2 }}>
               {upvotes}
             </Typography>
-            <IconButton onClick={handleDownvote} sx={{ color: '#f44336' }}>
+            <IconButton onClick={handleDownvote} sx={{ color: isDownvoted ? '#f44336' : '#9e9e9e' }}>
               <ThumbDownIcon />
             </IconButton>
             <Typography variant="body2" sx={{ mr: 2 }}>

@@ -13,6 +13,8 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ReplyCard from './ReplyCard';
 
 const AnswerCard = ({ answer }) => {
+  const [upvoted, setUpvoted] = useState(false);
+  const [downvoted, setDownvoted] = useState(false);
   const [upvotes, setUpvotes] = useState(answer.upvotes || 0);
   const [downvotes, setDownvotes] = useState(answer.downvotes || 0);
   const [replyText, setReplyText] = useState('');
@@ -22,10 +24,35 @@ const AnswerCard = ({ answer }) => {
   const likePercentage = totalVotes > 0 ? (upvotes / totalVotes) * 100 : 0;
   const pieColor = likePercentage < 40 ? '#f44336' : likePercentage < 70 ? '#ffeb3b' : '#4caf50';
 
-  const handleUpvote = () => setUpvotes(upvotes + 1);
-  const handleDownvote = () => setDownvotes(downvotes + 1);
+  const handleUpvote = () => {
+    if (upvoted) {
+      setUpvotes(upvotes - 1);
+      setUpvoted(false);
+    } else {
+      setUpvotes(upvotes + 1);
+      if (downvoted) {
+        setDownvotes(downvotes - 1);
+        setDownvoted(false);
+      }
+      setUpvoted(true);
+    }
+  };
+
+  const handleDownvote = () => {
+    if (downvoted) {
+      setDownvotes(downvotes - 1);
+      setDownvoted(false);
+    } else {
+      setDownvotes(downvotes + 1);
+      if (upvoted) {
+        setUpvotes(upvotes - 1);
+        setUpvoted(false);
+      }
+      setDownvoted(true);
+    }
+  };
+
   const handleReplySubmit = () => {
-    // Add reply to answer (actual implementation will vary)
     setShowReplyInput(false);
     setReplyText('');
   };
@@ -44,7 +71,7 @@ const AnswerCard = ({ answer }) => {
           <CircularProgress
             variant="determinate"
             value={likePercentage}
-            size={45} // 50% larger than original size (30 * 1.5 = 45)
+            size={45}
             thickness={5}
             sx={{ color: pieColor }}
           />
@@ -64,11 +91,11 @@ const AnswerCard = ({ answer }) => {
 
       {/* Upvote/Downvote Section */}
       <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-        <IconButton onClick={handleUpvote} sx={{ color: '#4caf50' }}>
+        <IconButton onClick={handleUpvote} sx={{ color: upvoted ? '#4caf50' : 'gray' }}>
           <ThumbUpIcon />
         </IconButton>
         <Typography variant="body2" sx={{ mr: 2 }}>{upvotes}</Typography>
-        <IconButton onClick={handleDownvote} sx={{ color: '#f44336' }}>
+        <IconButton onClick={handleDownvote} sx={{ color: downvoted ? '#f44336' : 'gray' }}>
           <ThumbDownIcon />
         </IconButton>
         <Typography variant="body2">{downvotes}</Typography>

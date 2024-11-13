@@ -23,15 +23,7 @@ const exampleClasses = [
   "Biology 505",
   "Computer Science 606",
   "English 707",
-  "Psychology 808",
-  "Math 101",
-  "History 202",
-  "Physics 303",
-  "Chemistry 404",
-  "Biology 505",
-  "Computer Science 606",
-  "English 707",
-  "Psychology 808",
+  "Psychology 808"
 ];
 
 // Example questions data
@@ -191,18 +183,6 @@ const exampleQuestions = [
 
 // Custom makeStyles for styling
 const useStyles = makeStyles({
-  root: {
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#e0e0e0",
-  },
-  bar: ({ value }) => ({
-    borderRadius: 5,
-    background: `linear-gradient(90deg, #2b6dd6 0%, #9c64f4 ${value}%, #ff0000 100%)`,
-    backgroundSize: `${value}% 100%`,
-    transition: "all 0.5s ease-in-out",
-  }),
-
   classContainer: {
     display: "flex",
     justifyContent: "center",
@@ -211,20 +191,30 @@ const useStyles = makeStyles({
     position: "relative",
   },
   classCard: {
-    padding: "10px",
+    padding: "15px",
     margin: "0 10px",
- 
+    minWidth: "150px",
     textAlign: "center",
     cursor: "pointer",
-    background: "linear-gradient(45deg, #2b6dd6, #9c64f4)",
-    color: "#ffffff",
-    borderRadius: "12px",
-
-    fontWeight: 500, // Semi-bold text
-    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+    fontWeight: "bold",
+    borderRadius: "15px",
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.1)",
+    fontFamily: "'Poppins', sans-serif", // Apply Poppins font
+    transition: "transform 0.3s, box-shadow 0.3s",
     "&:hover": {
       transform: "scale(1.05)",
-      transition: "transform 0.2s ease-in-out",
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.2)",
+    },
+  },
+  selectedClassCard: {
+    backgroundColor: "#6ea4fa", // Color for selected card
+    color: "#ffffff", // White text for contrast
+  },
+  unselectedClassCard: {
+    backgroundColor: "#3f51b5", // Default blue for unselected cards
+    color: "#ffffff",
+    "&:hover": {
+      backgroundColor: "#5c6bc0", // Slightly lighter on hover
     },
   },
   arrowButton: {
@@ -234,7 +224,7 @@ const useStyles = makeStyles({
     zIndex: 1,
     backgroundColor: "white",
     borderRadius: "50%",
-    border: "2px solid black",
+    border: "2px solid #3f51b5",
     padding: "0.5rem",
     "&:hover": {
       backgroundColor: "#f0f0f0",
@@ -245,11 +235,6 @@ const useStyles = makeStyles({
   },
   rightArrow: {
     right: "-20px",
-  },
-  hrLine: {
-    borderTop: "2px solid black",
-    marginTop: "1rem",
-    marginBottom: "1rem",
   },
 });
 
@@ -264,7 +249,8 @@ const GradientProgressBar = ({ value }) => {
             color: '#000', // Black text color
             fontFamily: 'Poppins, sans-serif',
             fontWeight: 'bold',
-            textAlign: 'center', // Center text within the box
+            textAlign: 'center',
+            pb: '10px' // Center text within the box
           }}
         >
           Your Progress: {value}%
@@ -307,7 +293,6 @@ const GradientProgressBar = ({ value }) => {
 const Mainscreen = () => {
   const classes = useStyles();
   const progressValue = 40;
-
   const [page, setPage] = useState(0);
   const [classesPerPage, setClassesPerPage] = useState(4);
   const [isModalOpen, setIsModalOpen] = useState(false); // Dynamically set this based on screen size
@@ -320,7 +305,14 @@ const Mainscreen = () => {
     const cardsThatFit = Math.floor(containerWidth / cardWidth);
     setClassesPerPage(cardsThatFit);
   };
+  const [selectedClass, setSelectedClass] = useState(null);
+  const filteredQuestions = selectedClass
+    ? exampleQuestions.filter((q) => q.class === selectedClass)
+    : exampleQuestions;
 
+  const handleClassSelect = (className) => {
+    setSelectedClass(className === selectedClass ? null : className); // Toggle selection
+  };
   // Listen for window resize to recalculate the number of classes that fit
   useEffect(() => {
     updateClassesPerPage(); // Initial calculation
@@ -351,15 +343,7 @@ const Mainscreen = () => {
 
   return (
     <div className="p-6" style={{ background: "#f9f9f9", minHeight: "100vh" }}>
-      {/* Title Card */}
-      {/* <Card className={classes.titleCard}>
-        <Typography className={classes.titleText}>BrainBoosters</Typography>
-      </Card> */}
 
-      {/* Black Line Above */}
-      <hr className={classes.hrLine} />
-
-      {/* Horizontal Class Selector with Pagination */}
       <div className={classes.classContainer}>
         {/* Left Arrow for Previous */}
         {page > 0 && (
@@ -374,7 +358,15 @@ const Mainscreen = () => {
         {/* Class Cards */}
         <div className="flex justify-center">
           {pagedClasses.map((className, index) => (
-            <Card key={index} className={classes.classCard}>
+            <Card
+              key={index}
+              className={`${classes.classCard} ${
+                selectedClass === className
+                  ? classes.selectedClassCard
+                  : classes.unselectedClassCard
+              }`}
+              onClick={() => handleClassSelect(className)}
+            >
               <Typography>{className}</Typography>
             </Card>
           ))}
@@ -391,8 +383,6 @@ const Mainscreen = () => {
         )}
       </div>
 
-      {/* Black Line Below */}
-      <hr className={classes.hrLine} />
 
       {/* Add a Question Button */}
       <div
@@ -423,19 +413,42 @@ const Mainscreen = () => {
       <GradientProgressBar value={progressValue} />
 
       {/* Recent Questions */}
-      <Typography variant="h6" className="mb-3 text-black">
-        Recent Questions:
+      {selectedClass && (
+        <Typography
+        variant="h5"
+        align="center"
+        gutterBottom
+        sx={{
+          fontFamily: "'Poppins', sans-serif",
+          fontWeight: "bold",
+          backgroundColor: "#6ea4fa", // Similar to selected class card color
+          color: "#ffffff",
+          padding: "8px 16px",
+          borderRadius: "15px",
+          display: "inline-block",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)", // Shadow effect
+          mt: 3, // Margin-top for spacing
+          mb: 3, // Margin-bottom for spacing
+        }}
+      >
+        Questions for {selectedClass}
       </Typography>
+      )}
+
       <div className="flex justify-center p-4 px-[100px]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-center">
-          {exampleQuestions.map((question) => (
-            <QuestionCard
-              key={question.id}
-              text={question.text}
-              className={question.class}
-              answers={question.answers}
-            />
-          ))}
+          {filteredQuestions.length > 0 ? (
+            filteredQuestions.map((question) => (
+              <QuestionCard
+                key={question.id}
+                text={question.text}
+                className={question.class}
+                answers={question.answers}
+              />
+            ))
+          ) : (
+            <Typography>No questions available for this class.</Typography>
+          )}
         </div>
       </div>
       <AddQuestionModal open={isModalOpen} onClose={handleCloseModal} />
