@@ -30,11 +30,7 @@ const Navbar = () => {
         <div className="flex items-center">
           <PsychologyIcon className="text-pink-500 ml-1" />
           <h1 className="text-1xl font-bold sm:text-2xl font-sans">BRAINBOOSTERS</h1>
-          <ul className="hidden md:flex">
-            <li>Home</li>
-            <li>About</li>
-            <li>Support</li>
-          </ul>
+          
         </div>
 
 
@@ -83,13 +79,6 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <ul className="md:hidden bg-gray-300 w-full p-4">
-          <li>Home</li>
-          <li>About</li>
-          <li>Support</li>
-        </ul>
-      )}
 
       {/* Login Modal */}
       <Dialog open={isLoginOpen} onClose={handleLoginClose}>
