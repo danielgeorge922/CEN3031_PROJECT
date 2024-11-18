@@ -23,7 +23,7 @@ def create_question(question: QuestionCreate, db: Session = Depends(get_db), cur
     db.refresh(db_question)
     return db_question
 
-@router.get("/questions/{class_id}", response_model=List[QuestionRead])
+@router.get("/{class_id}/questions", response_model=List[QuestionRead])
 def get_questions_by_class(class_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     questions = db.query(Question).filter(Question.class_id == class_id).all()
     return questions
@@ -62,3 +62,9 @@ def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, 
     db.refresh(db_answer)
 
     return db_question
+
+
+@router.get("/questions/{question_id}/answers", response_model = List[AnswerRead])
+def get_answers_by_question(question_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    answers = db.query(Answer).filter(Answer.question_id == question_id),all()
+    return answers
