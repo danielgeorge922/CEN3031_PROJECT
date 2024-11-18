@@ -2,6 +2,7 @@ import uuid
 
 from pydantic import EmailStr, BaseModel, Field
 from sqlmodel import Relationship
+from typing import List
 
 class UserBase(BaseModel):
     email: EmailStr     
@@ -28,6 +29,52 @@ class questionCreate(questionBase):
 class answerCreate(answerBase):
     question_id: int
     user_id: int
+
+class QuestionBase(BaseModel):
+    title: str
+    text: str
+
+class QuestionCreate(QuestionBase):
+    class_id: int
+
+class QuestionWithAnswerCreate(QuestionBase):
+    class_id: int
+    answer_text: str
+
+class QuestionRead(QuestionBase):
+    id: int
+    user_id: int
+    class_id: int
+
+    class Config:
+        orm_mode: True
+
+class AnswerBase(BaseModel):
+    text: str
+
+class AnswerCreate(AnswerBase):
+    question_id: int
+
+class AnswerRead(AnswerBase):
+    id: int
+    question_id: int
+    user_id: int
+
+    class Config:
+        orm_mode: True
+
+class ClassBase(BaseModel):
+    name: str
+    description: str | None = None
+
+class ClassCreate(ClassBase):
+    pass
+
+class ClassRead(ClassBase):
+    id: int
+
+    class Config:
+        orm_mode: True
 
 class Token(BaseModel):
     access_token: str

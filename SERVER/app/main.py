@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import get_db, Base, engine
 from app.api.main import api_router
+from app.api.routes.classes import router as classes_router
 
 app = FastAPI()
 
