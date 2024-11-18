@@ -20,10 +20,15 @@ const LoginForm = ({ handleClose, handleLogin }) => {
     setError(null); // Reset error before trying to log in
 
     try {
-      const userData = { email, password };
-      const response = await axios.post("http://127.0.0.1:8000/users/login", userData);
+      const formData = new FormData();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const response = await axios.post("http://127.0.0.1:8000/users/login", formData);
 
       if (response.status === 200 || response.status === 201) {
+        const { access_token } = response.data;
+        localStorage.setItem('token', access_token); // Store token in localStorage
         alert('Logged in successfully');
         navigate('/main');
       }
