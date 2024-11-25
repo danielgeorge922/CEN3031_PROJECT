@@ -21,6 +21,7 @@ class User(Base):
     classes = relationship("Class", secondary=user_classes, back_populates="users")
     questions = relationship("Question", back_populates="user")
     answers = relationship("Answer", back_populates="user")
+    likes = relationship("Like", back_populates="user")
 
 class Class(Base):
     __tablename__ = 'classes'
@@ -53,3 +54,15 @@ class Answer(Base):
 
     user = relationship("User", back_populates="answers")
     question = relationship("Question", back_populates="answers")
+    likes = relationship("Like", back_populates="answer")
+    
+
+class Like(Base):
+    __tablename__ = 'likes'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    answer_id = Column(Integer, ForeignKey('answers.id'), nullable=False)
+    dislike = Column(Boolean, default=False)
+
+    user = relationship("User")
+    answer = relationship("Answer")
