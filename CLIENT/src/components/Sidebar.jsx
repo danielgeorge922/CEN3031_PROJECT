@@ -26,7 +26,8 @@ const Sidebar = () => {
   // Function to confirm logout
   const handleConfirmLogout = () => {
     setOpen(false);
-    navigate('/logout'); // Replace with the actual logout logic or URL
+    localStorage.removeItem("token"); // destroy bearer token
+    navigate('/'); // nav to home page
   };
 
   return (
