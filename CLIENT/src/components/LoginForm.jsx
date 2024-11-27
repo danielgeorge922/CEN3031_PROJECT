@@ -20,11 +20,15 @@ const LoginForm = ({ handleClose, handleLogin }) => {
     setError(null); // Reset error before trying to log in
 
     try {
-      const formData = new FormData();
+      const formData = new URLSearchParams();
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await axios.post("http://127.0.0.1:8000/users/login", formData);
+      const response = await axios.post("http://127.0.0.1:8000/users/login", formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
 
       if (response.status === 200 || response.status === 201) {
         const { access_token } = response.data;
