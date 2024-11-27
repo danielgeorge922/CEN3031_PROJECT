@@ -4,7 +4,7 @@ from pydantic import EmailStr
 from typing import List
 
 from app.schema import QuestionCreate, QuestionRead, AnswerCreate, AnswerRead, UserBase, QuestionWithAnswerCreate
-from app.db.models import Question, Answer
+from app.db.models import Question, Answer, User
 from app.main import get_db
 from app.api.dependencies import get_current_user
 
@@ -63,6 +63,14 @@ def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, 
 
     return db_question
 
+@router.get("/user/questions", response_model=List[QuestionRead])
+def get_user_questions(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    user = db.query(User).filter(User.email == current_user.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    questions = db.query(Question).filter(Question.class_id.in_([class_.id for class_ in user.classes])).all()
+    return questions
 
 @router.get("/questions/{question_id}/answers", response_model = List[AnswerRead])
 def get_answers_by_question(question_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
