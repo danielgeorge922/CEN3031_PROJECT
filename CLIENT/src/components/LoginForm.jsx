@@ -12,6 +12,8 @@ const LoginForm = ({ handleClose, handleLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null); // Add error state
+  const [token, setToken] = useState("");
+
 
   const navigate = useNavigate();
 
