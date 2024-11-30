@@ -41,12 +41,24 @@ const SignUpForm = () => {
   
     if (isValidFirstName && isValidLastName && isValidEmail && isValidPassword && doPasswordsMatch) {
       try {
-        const response = await axios.post("http://127.0.0.1:8000/users/register", {
+        const payload = {
+          first_name: firstName,
+          last_name: lastName,
           email: email,
           password: password,
+        };
+
+        const response = await axios.post("http://127.0.0.1:8000/users/register", payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
   
         if (response.status === 200 || response.status === 201) {
+          // get and store bearer token on client
+          const { access_token } = response.data;
+          localStorage.setItem("token", access_token);
+
           alert('Account created successfully!');
           navigate('/main');
         } else {
