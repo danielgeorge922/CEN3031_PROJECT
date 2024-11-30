@@ -23,6 +23,15 @@ def create_question(question: QuestionCreate, db: Session = Depends(get_db), cur
     db.refresh(db_question)
     return db_question
 
+@router.get("/user/questions", response_model=List[QuestionRead])
+def get_user_questions(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    user = db.query(User).filter(User.email == current_user.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    questions = db.query(Question).filter(Question.class_id.in_([class_.id for class_ in user.classes])).all()
+    return questions
+
 @router.get("/{class_id}/questions", response_model=List[QuestionRead])
 def get_questions_by_class(class_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     questions = db.query(Question).filter(Question.class_id == class_id).all()
@@ -62,15 +71,6 @@ def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, 
     db.refresh(db_answer)
 
     return db_question
-
-@router.get("/user/questions", response_model=List[QuestionRead])
-def get_user_questions(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
-    user = db.query(User).filter(User.email == current_user.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    questions = db.query(Question).filter(Question.class_id.in_([class_.id for class_ in user.classes])).all()
-    return questions
 
 @router.get("/questions/{question_id}/answers", response_model = List[AnswerRead])
 def get_answers_by_question(question_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):

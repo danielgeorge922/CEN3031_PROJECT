@@ -35,7 +35,7 @@ class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
-    content = Column(String, nullable=False)
+    text = Column(String, nullable=False, default="N/A")
     class_id = Column(Integer, ForeignKey('classes.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     is_answered = Column(Boolean, default=False)
@@ -47,7 +47,7 @@ class Question(Base):
 class Answer(Base):
     __tablename__ = 'answers'
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(String, nullable=False)
+    text = Column(String, nullable=False)
     question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     likes = Column(Integer, default=0)

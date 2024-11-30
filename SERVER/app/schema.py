@@ -14,6 +14,13 @@ class UserCreate(UserLog):
     first_name: str
     last_name: str
     
+class UserRead(UserBase):
+    id: int
+    first_name: str
+    last_name: str
+    
+    class Config:
+        orm_mode = True
     
 class questionBase(BaseModel):
     title: str
