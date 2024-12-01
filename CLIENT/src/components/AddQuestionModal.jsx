@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Button,
   styled,
@@ -25,29 +26,60 @@ const ValidationMessage = styled("p")({
   textAlign: "left",
 });
 
-const AddQuestionModal = ({ open, onClose, onSubmit }) => {
+const AddQuestionModal = ({ open, onClose }) => {
   const [selectedClass, setSelectedClass] = useState("");
   const [question, setQuestion] = useState("");
+  const [classOptions, setClassOptions] = useState([]); // Holds classes fetched from the API
 
-  // Example list of classes
-  const classOptions = [
-    "Math 101",
-    "History 202",
-    "Physics 303",
-    "Chemistry 404",
-    "Biology 505",
-    "Computer Science 606",
-    "English 707",
-    "Psychology 808",
-  ];
+  useEffect(() => {
+    // Fetch classes from the API
+    const fetchClasses = async () => {
+      try {
+        const access_token = localStorage.getItem("token");
+        const response = await axios.get("http://127.0.0.1:8000/classes/classes", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        setClassOptions(response.data);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      }
+    };
+    fetchClasses();
+  }, []);
 
   const isQuestionValid = question.length > 10; // Example validation
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedClass && isQuestionValid) {
-      onSubmit({ class: selectedClass, question });
-      onClose();
+    const selectedClassObject = classOptions.find(
+      (cls) => cls.name === selectedClass
+    );
+
+    if (selectedClassObject && isQuestionValid) {
+      try {
+        const data = {
+          class_id: selectedClassObject.id, // Use the id from the selected class
+          title: "test-question",
+          text: question,
+        };
+        const access_token = localStorage.getItem("token");
+
+        const response = await axios.post("http://127.0.0.1:8000/questions/questions", data, {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+
+        console.log("Question submitted successfully:", response.data);
+        alert("Question submitted successfully!");
+        onClose();
+      } catch (error) {
+        console.error("Error submitting question:", error);
+        alert("Failed to submit the question.");
+      }
     } else {
       alert("Please select a class and enter a valid question.");
     }
@@ -83,9 +115,9 @@ const AddQuestionModal = ({ open, onClose, onSubmit }) => {
             ),
           }}
         >
-          {classOptions.map((classOption, index) => (
-            <MenuItem key={index} value={classOption}>
-              {classOption}
+          {classOptions.map((classOption) => (
+            <MenuItem key={classOption.id} value={classOption.name}>
+              {classOption.name}
             </MenuItem>
           ))}
         </StyledTextField>
