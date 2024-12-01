@@ -21,7 +21,9 @@ const classMapping = {
   9: 'Physics 303',
   10: 'Chemistry 404',
   11: 'Biology 505',
-  // Add all other class_id to class_name mappings here
+  12: 'Computer Science 606',
+  13: 'English 707',
+  14: 'Psychology 808'
 };
 
 
