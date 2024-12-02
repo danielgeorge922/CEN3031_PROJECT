@@ -18,3 +18,7 @@ app.add_middleware(
 )
 
 app.include_router(api_router, dependencies=[Depends(get_db)])
+
+api_router.include_router(questions.router, prefix="/questions", tags=["questions"])
+
+api_router.include_router(answers.router, prefix="/answers", tags=["answers"])
