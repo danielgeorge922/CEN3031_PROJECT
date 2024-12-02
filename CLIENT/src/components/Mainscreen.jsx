@@ -225,6 +225,21 @@ const Mainscreen = () => {
     }
   };
 
+  const refreshQuestions = async () => {
+    try {
+      const access_token = localStorage.getItem("token");
+      const response = await axios.get("http://127.0.0.1:8000/questions/user/questions", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+  
+      setQuestions(response.data); // Update the state with new questions
+    } catch (error) {
+      console.error("Error refreshing questions:", error);
+    }
+  };
+
   return (
     <div className="p-6" style={{ background: "#f9f9f9", minHeight: "100vh" }}>
 
@@ -325,7 +340,7 @@ const Mainscreen = () => {
       <div className="flex justify-center p-4 px-[100px]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-center">
           {filteredQuestions.length > 0 ? (
-            filteredQuestions.map((question) => {
+            [...filteredQuestions].reverse().map((question) => {
               const className = classMapping[question.class_id]; // Get the class name based on class_id
               return (
                 <QuestionCard
@@ -341,7 +356,7 @@ const Mainscreen = () => {
           )}
         </div>
       </div>
-      <AddQuestionModal open={isModalOpen} onClose={handleCloseModal} />
+      <AddQuestionModal open={isModalOpen} onClose={handleCloseModal} onQuestionSubmitted={refreshQuestions}/>
     </div>
   );
 };

@@ -26,7 +26,7 @@ const ValidationMessage = styled("p")({
   textAlign: "left",
 });
 
-const AddQuestionModal = ({ open, onClose }) => {
+const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
   const [selectedClass, setSelectedClass] = useState("");
   const [question, setQuestion] = useState("");
   const [classOptions, setClassOptions] = useState([]); // Holds classes fetched from the API
@@ -75,6 +75,7 @@ const AddQuestionModal = ({ open, onClose }) => {
 
         console.log("Question submitted successfully:", response.data);
         alert("Question submitted successfully!");
+        if (onQuestionSubmitted) onQuestionSubmitted(); // Trigger main screen refresh
         onClose();
       } catch (error) {
         console.error("Error submitting question:", error);
