@@ -44,7 +44,7 @@ const getPieColor = (percentage) => {
   return '#4caf50'; // Green
 };
 
-const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
+const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
   const [open, setOpen] = useState(false);
   const [upvotes, setUpvotes] = useState(upvoteCount);
   const [downvotes, setDownvotes] = useState(downvoteCount);
@@ -118,9 +118,6 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
 
         <Typography sx={{ fontWeight: 'bold', cursor: 'pointer' }}>
           {text}
-        </Typography>
-        <Typography variant="subtitle2" sx={{ mt: 1, color: 'gray' }}>
-          Answers: {answers}
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
@@ -211,7 +208,7 @@ const QuestionCard = ({ text, className, answers, profilePic, upvoteCount = 0, d
         onClose={handleClose}
         text={text}
         className={className}
-        answers={answers}
+        questionId={id}
       />
     </>
   );

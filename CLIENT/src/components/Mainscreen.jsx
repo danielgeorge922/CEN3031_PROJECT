@@ -345,9 +345,9 @@ const Mainscreen = () => {
               return (
                 <QuestionCard
                   key={question.id}
+                  id={question.id}
                   text={question.text}
                   className={className}  // Now passing the class name
-                  answers={question.answers}
                 />
               );
             })

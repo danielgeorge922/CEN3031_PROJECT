@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Dialog,
   DialogTitle,
@@ -12,7 +13,10 @@ import {
 } from '@mui/material';
 import AnswerCard from './AnswerCard';
 
-const QuestionCardModal = ({ open, onClose, text, className }) => {
+const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
+  const [newAnswer, setNewAnswer] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Dummy answers data for testing
   const answers = [
     {
@@ -42,6 +46,32 @@ const QuestionCardModal = ({ open, onClose, text, className }) => {
       ],
     },
   ];
+
+  const handleAnswerSubmit = async () => {
+    if (!newAnswer.trim()) return; // Prevent empty submissions
+  
+    try {
+      setIsSubmitting(true);
+      const access_token = localStorage.getItem('token');
+      const payload = {
+        question_id: questionId,
+        text: newAnswer,
+      };
+      const response = await axios.post(`http://127.0.0.1:8000/questions/questions/${questionId}/answers`, payload, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setNewAnswer(''); // Clear input field
+      onClose(); // Optionally close the modal
+    } catch (error) {
+      console.error('Error submitting answer:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Dialog
@@ -97,9 +127,17 @@ const QuestionCardModal = ({ open, onClose, text, className }) => {
             fullWidth
             multiline
             rows={3}
+            value={newAnswer}
+            onChange={(e) => setNewAnswer(e.target.value)}
           />
-          <Button color="primary" variant="contained" sx={{ mt: 2 }}>
-            Submit Answer
+          <Button
+            color="primary"
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={handleAnswerSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Answer'}
           </Button>
         </Box>
       </DialogContent>
