@@ -59,6 +59,20 @@ const SignUpForm = () => {
           const { access_token } = response.data;
           localStorage.setItem("token", access_token);
 
+          const joinPromises = [];
+          for (let classId = 7; classId <= 14; classId++) {
+            joinPromises.push(
+              axios.post(`http://127.0.0.1:8000/classes/classes/${classId}/join`, {}, {
+                  headers: {
+                    Authorization: `Bearer ${access_token}`,
+                  },
+                }
+              )
+            );
+          }
+
+          await Promise.all(joinPromises);
+
           alert('Account created successfully!');
           navigate('/main');
         } else {

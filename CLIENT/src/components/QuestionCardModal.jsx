@@ -63,7 +63,6 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
           },
         }
       );
-      console.log(response.data);
       setNewAnswer(''); // Clear input field
       onClose(); // Optionally close the modal
     } catch (error) {
