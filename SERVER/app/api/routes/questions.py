@@ -74,5 +74,5 @@ def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, 
 
 @router.get("/questions/{question_id}/answers", response_model = List[AnswerRead])
 def get_answers_by_question(question_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
-    answers = db.query(Answer).filter(Answer.question_id == question_id),all()
+    answers = db.query(Answer).filter(Answer.question_id == question_id).all()
     return answers
