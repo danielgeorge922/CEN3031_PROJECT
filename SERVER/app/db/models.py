@@ -17,6 +17,7 @@ class User(Base):
     last_name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
+    user_points = Column(Integer, default=0)
 
     classes = relationship("Class", secondary=user_classes, back_populates="users")
     questions = relationship("Question", back_populates="user")

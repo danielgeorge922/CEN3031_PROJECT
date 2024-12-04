@@ -2,13 +2,13 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.crud import get_user_by_email
-from app.schema import UserBase
+from app.schema import UserBase, UserRead
 from app.core.security import oauth2_scheme
 from app.core.config import SECRET_KEY, ALGORITHM
 import jwt
 from app.main import get_db
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserBase:
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserRead:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")

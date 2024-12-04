@@ -23,3 +23,9 @@ def create_user(db: Session, user_create: UserCreate):
 
 def get_user_by_email(db: Session, email: EmailStr):
     return db.query(User).filter(User.email == email).first()
+
+def add_point_to_user(user_id: int, db: Session):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user:
+        user.points += 1
+        db.commit()

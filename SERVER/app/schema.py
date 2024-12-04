@@ -18,6 +18,7 @@ class UserRead(UserBase):
     id: int
     first_name: str
     last_name: str
+    user_points: int | None = None
     
     class Config:
         orm_mode = True

@@ -7,6 +7,7 @@ from app.schema import QuestionCreate, QuestionRead, AnswerCreate, AnswerRead, U
 from app.db.models import Question, Answer, User
 from app.main import get_db
 from app.api.dependencies import get_current_user
+from app.crud import add_point_to_user
 
 router = APIRouter()
 
@@ -21,6 +22,9 @@ def create_question(question: QuestionCreate, db: Session = Depends(get_db), cur
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
+    
+    add_point_to_user(current_user.id, db)
+    
     return db_question
 
 @router.get("/user/questions", response_model=List[QuestionRead])
@@ -47,6 +51,9 @@ def create_answer(question_id: int, answer: AnswerCreate, db: Session = Depends(
     db.add(db_answer)
     db.commit()
     db.refresh(db_answer)
+    
+    add_point_to_user(current_user.id, db)
+    
     return db_answer
 
 @router.post("/questions_with_answer", response_model=QuestionRead)

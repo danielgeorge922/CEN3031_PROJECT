@@ -35,6 +35,6 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     return create_token(form_data=form_data, db=db)
 
-@router.get("/me", response_model=UserBase)
-def read_users_me(current_user: UserBase = Depends(get_current_user)):
+@router.get("/me", response_model=UserRead)
+def read_users_me(current_user: UserRead = Depends(get_current_user)):
     return current_user
