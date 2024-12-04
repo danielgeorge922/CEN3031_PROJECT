@@ -67,6 +67,8 @@ class AnswerRead(AnswerBase):
     id: int
     question_id: int
     user_id: int
+    likes: int
+    dislikes: int
 
     class Config:
         orm_mode: True

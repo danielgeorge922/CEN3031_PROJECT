@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from pydantic import EmailStr
 from typing import List
 
-from app.schema import QuestionCreate, QuestionRead, AnswerCreate, AnswerRead, UserBase, QuestionWithAnswerCreate
+from app.schema import *
 from app.db.models import Question, Answer, User
 from app.main import get_db
 from app.api.dependencies import get_current_user
-from app.crud import add_point_to_user
+from app.crud import add_point_to_user, like_answer, dislike_answer
 
 router = APIRouter()
 
@@ -42,7 +42,7 @@ def get_questions_by_class(class_id: int, db: Session = Depends(get_db), current
     return questions
 
 @router.post("/questions/{question_id}/answers", response_model=AnswerRead)
-def create_answer(question_id: int, answer: AnswerCreate, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+def create_answer(question_id: int, answer: AnswerBase, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     db_answer = Answer(
         text=answer.text,
         question_id=question_id,
@@ -55,6 +55,16 @@ def create_answer(question_id: int, answer: AnswerCreate, db: Session = Depends(
     add_point_to_user(current_user.id, db)
     
     return db_answer
+
+@router.put("/answers/{answer_id}/like", status_code=200)
+def like_answer_route(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    like_answer(answer_id, current_user.id, db)
+    return {"message": "Answer liked successfully"}
+
+@router.put("/answers/{answer_id}/dislike", status_code=200)
+def dislike_answer_route(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    dislike_answer(answer_id, current_user.id, db)
+    return {"message": "Answer disliked successfully"}
 
 @router.post("/questions_with_answer", response_model=QuestionRead)
 def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Depends
-from app.db.models import User
+from app.db.models import User, Answer
 import jwt
 
 from pydantic import EmailStr
@@ -27,5 +27,19 @@ def get_user_by_email(db: Session, email: EmailStr):
 def add_point_to_user(user_id: int, db: Session):
     user = db.query(User).filter(User.id == user_id).first()
     if user:
-        user.points += 1
+        user.user_points += 1
         db.commit()
+
+def like_answer(answer_id: int, user_id: int, db: Session):
+    answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+    answer.likes += 1
+    db.commit()
+
+def dislike_answer(answer_id: int, user_id: int, db: Session):
+    answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+    answer.dislikes += 1
+    db.commit()
