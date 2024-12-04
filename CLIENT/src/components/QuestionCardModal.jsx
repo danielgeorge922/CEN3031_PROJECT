@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Dialog,
@@ -14,42 +14,36 @@ import {
 import AnswerCard from './AnswerCard';
 
 const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
+  const [answers, setAnswers] = useState([]);
   const [newAnswer, setNewAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Dummy answers data for testing
-  const answers = [
-    {
-      userProfile: { name: 'Alice Johnson', picture: undefined },
-      text: 'This is a great question! Here’s my take on it...',
-      upvotes: 5,
-      downvotes: 2,
-      replies: [
-        { userProfile: { name: 'Bob Smith', picture: undefined }, text: 'I agree with this answer!' },
-      ],
-    },
-    {
-      userProfile: { name: 'Chris Evans', picture: undefined },
-      text: 'I have a different perspective on this. Here’s what I think...',
-      upvotes: 3,
-      downvotes: 1,
-      replies: [],
-    },
-    {
-      userProfile: { name: 'Dana White', picture: undefined },
-      text: 'Thank you for asking this! I think the answer is...',
-      upvotes: 8,
-      downvotes: 0,
-      replies: [
-        { userProfile: { name: 'Ellen Park', picture: undefined }, text: 'Very insightful, thank you!' },
-        { userProfile: { name: 'Frank Lee', picture: undefined }, text: 'I learned a lot from this answer.' },
-      ],
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  
+  // fetch answers for current question
+  useEffect(() => {
+    if (open && questionId) {
+      const fetchAnswers = async () => {
+        setLoading(true);
+        try {
+          const access_token = localStorage.getItem("token");
+          const response = await axios.get(`http://127.0.0.1:8000/questions/questions/${questionId}/answers`, {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+          setAnswers(response.data);
+        } catch (error) {
+          console.error("Error fetching answers: ", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchAnswers();
+    }
+  }, [open, questionId]);
 
   const handleAnswerSubmit = async () => {
     if (!newAnswer.trim()) return; // Prevent empty submissions
-  
     try {
       setIsSubmitting(true);
       const access_token = localStorage.getItem('token');
@@ -63,8 +57,19 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
           },
         }
       );
+
+      const newAnswerData = response.data;
+
+      setAnswers((prevAnswers) => [
+        ...prevAnswers, {
+          id: newAnswerData.id,
+          text: newAnswerData.text,
+          question_id: newAnswerData.question_id,
+          user_id: newAnswerData.user_id,
+        },
+      ]);
+
       setNewAnswer(''); // Clear input field
-      onClose(); // Optionally close the modal
     } catch (error) {
       console.error('Error submitting answer:', error);
     } finally {
@@ -108,9 +113,22 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
         </Typography>
 
         {/* Render answers */}
-        {answers.length > 0 ? (
-          answers.map((answer, index) => (
-            <AnswerCard key={index} answer={answer} />
+        {loading ? (
+          <Typography variant="body2" sx={{ color: 'gray' }}>
+            Loading answers...
+          </Typography>
+        ) : answers.length > 0 ? (
+          answers.map((answer) => (
+            <AnswerCard
+              key={answer.id}
+              answer={{
+                userProfile: { name: `User ${answer.user_id}`, picture: undefined },
+                text: answer.text,
+                upvotes: 0, // Default placeholder
+                downvotes: 0, // Default placeholder
+                replies: [], // Default placeholder
+              }}
+            />
           ))
         ) : (
           <Typography variant="body2" sx={{ color: 'gray' }}>
