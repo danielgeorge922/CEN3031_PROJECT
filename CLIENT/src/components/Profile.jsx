@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -21,6 +21,7 @@ function Profile() {
   const [profilePic, setProfilePic] = useState(null);
   const [editing, setEditing] = useState(false);
   const [badgeProgress, setBadgeProgress] = useState(60); // Example progress
+  const [points,setPoints] = useState("")
 
   const handleFirstNameChange = (event) => setFirstName(event.target.value);
   const handleLastNameChange = (event) => setLastName(event.target.value);
@@ -31,6 +32,31 @@ function Profile() {
       setProfilePic(URL.createObjectURL(file));
     }
   };
+
+  // useEffect(()=>{
+  //      const getUserInfo = async () => {
+  //   try{
+  //     const access_token = localStorage.getItem("token");
+  //     const response = await axios.get("http://127.0.0.1:8000/users/me", {
+  //       headers: {
+  //         Authorization: `Bearer ${access_token}`,
+  //       },
+  //     });
+
+  //     const { points } = response.data;
+  //     setPoints(points);
+      
+  //     const {first} = response.data;
+  //     setFirstName(first);
+
+  //     const {last} = response.data
+  //     setLastName(last);
+
+  //   } catch(error){
+  //     console.log(error)
+  //   }
+  // }
+  // },[])
 
   const toggleEditing = () => setEditing(!editing);
 
@@ -167,27 +193,32 @@ function Profile() {
           <Box
             sx={{
               width: "100%",
+              maxWidth: "300px",
               mb: 2,
+              mx: "auto", // Center the box horizontally
               display: "flex",
-              justifyContent: "space-around",
-              gap: 1,
-              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
               p: 2,
               border: "1px solid #ccc",
-              borderRadius: "8px",
+              borderRadius: "12px",
+              backgroundColor: "#e0f7fa", // Light teal background
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow
+              transition: "transform 0.2s, box-shadow 0.2s", // Animation for hover effect
+              "&:hover": {
+                transform: "scale(1.05)", // Slight scaling on hover
+                boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.2)", // Stronger shadow on hover
+              },
             }}
           >
-            <Avatar sx={{ bgcolor: "gold", width: 50, height: 50 }}>🏆</Avatar>
-            <Avatar sx={{ bgcolor: "silver", width: 50, height: 50 }}>
-              🎖️
-            </Avatar>
-            <Avatar sx={{ bgcolor: "bronze", width: 50, height: 50 }}>
-              🥉
-            </Avatar>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#006064" }}>
+              {/* Points: {points} */}
+              Points: 10
+            </Typography>
           </Box>
 
           {/* Progress Bar Section */}
-          <Box sx={{ width: "100%", textAlign: "center", fontFamily: "Poppins, sans-serif" }}>
+          {/* <Box sx={{ width: "100%", textAlign: "center", fontFamily: "Poppins, sans-serif" }}>
             <Typography variant="body1" sx={{ mb: 1, fontFamily: "Poppins, sans-serif" }}>
               Progress Towards Next Badge
             </Typography>
@@ -209,7 +240,7 @@ function Profile() {
             <Typography variant="body2" sx={{ mt: 1, fontFamily: "Poppins, sans-serif" }}>
               {badgeProgress}% completed
             </Typography>
-          </Box>
+          </Box> */}
 
           <div className="flex flex-col gap-4 pt-7">
           {/* Badge for +1 */}
@@ -218,25 +249,25 @@ function Profile() {
               <span className="text-xl font-bold mr-1.5">+</span>
               <p className="font-bold">1</p>
             </div>
-            <p className="ml-4">Dummy text for +1 badge</p>
+            <p className="ml-4">Have your Question liked</p>
           </div>
 
           {/* Badge for +2 */}
           <div className="flex items-center">
             <div className="flex items-center bg-blue-600 justify-center text-white rounded-full px-3 py-2">
               <span className="text-xl font-bold mr-1.5">+</span>
-              <p className="font-bold">2</p>
+              <p className="font-bold">1</p>
             </div>
-            <p className="ml-4">Dummy text for +2 badge</p>
+            <p className="ml-4">Answer a Question</p>
           </div>
 
           {/* Badge for +3 */}
           <div className="flex items-center">
             <div className="flex items-center bg-green-600 justify-center text-white rounded-full px-3 py-2">
               <span className="text-xl font-bold mr-1.5">+</span>
-              <p className="font-bold">3</p>
+              <p className="font-bold">1</p>
             </div>
-            <p className="ml-4">Dummy text for +3 badge</p>
+            <p className="ml-4">Submit a Question</p>
           </div>
         </div>
 

@@ -84,56 +84,73 @@ const useStyles = makeStyles({
   },
 });
 
-const GradientProgressBar = ({ value }) => {
-  return (
-    <Box sx={{ width: '100%', mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      {/* Progress Text and Bar */}
-      <Box sx={{ flexGrow: 1 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            color: '#000', // Black text color
-            fontFamily: 'Poppins, sans-serif',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            pb: '10px' // Center text within the box
-          }}
-        >
-          Your Progress: {value}%
-        </Typography>
-        <LinearProgress
-          variant="determinate"
-          value={value}
-          sx={{
-            height: '12px', // Thicker bar
-            borderRadius: '6px',
-            backgroundColor: '#e0e0e0', // Background color for the track
-            paddingTop: '8px', // Y-padding on top
-            paddingBottom: '8px', // Y-padding on bottom
-            '& .MuiLinearProgress-bar': {
-              borderRadius: '6px',
-              backgroundImage: 'linear-gradient(90deg, #4caf50, #81c784)', // Gradient for the progress bar
-            },
-          }}
-        />
-      </Box>
+// const GradientProgressBar = ({ value }) => {
+//   return (
+//     <Box sx={{ width: '100%', mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+//       {/* Progress Text and Bar */}
+//       <Box sx={{ flexGrow: 1 }}>
+//         <Typography
+//           variant="h6"
+//           sx={{
+//             color: '#000', // Black text color
+//             fontFamily: 'Poppins, sans-serif',
+//             fontWeight: 'bold',
+//             textAlign: 'center',
+//             pb: '10px' // Center text within the box
+//           }}
+//         >
+//           Your Progress: {value}%
+//         </Typography>
+//         <LinearProgress
+//           variant="determinate"
+//           value={value}
+//           sx={{
+//             height: '12px', // Thicker bar
+//             borderRadius: '6px',
+//             backgroundColor: '#e0e0e0', // Background color for the track
+//             paddingTop: '8px', // Y-padding on top
+//             paddingBottom: '8px', // Y-padding on bottom
+//             '& .MuiLinearProgress-bar': {
+//               borderRadius: '6px',
+//               backgroundImage: 'linear-gradient(90deg, #4caf50, #81c784)', // Gradient for the progress bar
+//             },
+//           }}
+//         />
+//       </Box>
 
-      {/* Enlarged Trophy Icon */}
-      <Avatar
-        sx={{
-          bgcolor: 'gold',
-          width: 60, // 100% larger (originally 30px, now 60px)
-          height: 60,
-          fontSize: 32, // Increase font size to fit larger icon
-          boxShadow: '0 0 8px 4px rgba(255, 215, 0, 0.8), 0 0 12px 6px rgba(255, 215, 0, 0.5)',
-          marginLeft: '16px', // Space between progress bar and icon
-        }}
-      >
-        🏆
-      </Avatar>
-    </Box>
-  );
-};
+//       {/* Enlarged Trophy Icon */}
+//       <Avatar
+//         sx={{
+//           bgcolor: 'gold',
+//           width: 60, // 100% larger (originally 30px, now 60px)
+//           height: 60,
+//           fontSize: 32, // Increase font size to fit larger icon
+//           boxShadow: '0 0 8px 4px rgba(255, 215, 0, 0.8), 0 0 12px 6px rgba(255, 215, 0, 0.5)',
+//           marginLeft: '16px', // Space between progress bar and icon
+//         }}
+//       >
+//         🏆
+//       </Avatar>
+//     </Box>
+//   );
+// };
+
+const Points = ({points}) => {
+  return (
+    <div className="text-4xl flex items-center justify-center bg-green-900 max-w-[400px] p-2 shadow-lg">
+      <div className="flex text-white">
+        Current Points: 
+      </div>
+      <div className="flex ml-3 bg-blue-100 p-4 rounded-full">
+        <h1 className="font-semibold ">
+            10
+            {points}
+        </h1>
+      </div>
+      
+    </div>
+  )
+}
 
 const Mainscreen = () => {
   const [userClasses, setUserClasses] = useState([]);
@@ -144,6 +161,9 @@ const Mainscreen = () => {
   const [classesPerPage, setClassesPerPage] = useState(4);
   const [isModalOpen, setIsModalOpen] = useState(false); // Dynamically set this based on screen size
   const [selectedClass, setSelectedClass] = useState(null);
+  // const [points,setPoints] = useState = ("")
+  // const [firstName,setFirstName] = useState = ("")
+  // const [lastName,setLastName] = useState = ("")
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -189,6 +209,9 @@ const Mainscreen = () => {
   
     getClasses();
     getQuestions();
+
+    // getUserInfo();
+
     // Listen for window resize to recalculate the number of classes that fit
     updateClassesPerPage(); // Initial calculation
     window.addEventListener("resize", updateClassesPerPage);
@@ -212,7 +235,31 @@ const Mainscreen = () => {
   const classNames = userClasses.map((classObj) => classObj.name); // make array of class names from class objs
   const pagedClasses = classNames.slice(startIndex, endIndex);
 
-  // Handle page navigation
+  
+
+   // const getUserInfo = async () => {
+  //   try{
+  //     const access_token = localStorage.getItem("token");
+  //     const response = await axios.get("http://127.0.0.1:8000/users/me", {
+  //       headers: {
+  //         Authorization: `Bearer ${access_token}`,
+  //       },
+  //     });
+
+  //     const { points } = response.data;
+  //     setPoints(points);
+      
+  //     const {first} = response.data;
+  //     setFirstName(first);
+
+  //     const {last} = response.data
+  //     setLastName(last);
+
+  //   } catch(error){
+  //     console.log(error)
+  //   }
+  // }
+
   const handleNextPage = () => {
     if (endIndex < userClasses.length) {
       setPage(page + 1);
@@ -239,6 +286,8 @@ const Mainscreen = () => {
       console.error("Error refreshing questions:", error);
     }
   };
+  
+
 
   return (
     <div className="p-6" style={{ background: "#f9f9f9", minHeight: "100vh" }}>
@@ -312,7 +361,7 @@ const Mainscreen = () => {
       </div>
 
       {/* Gradient Progress Bar */}
-      <GradientProgressBar value={progressValue} />
+      <Points/>
 
       {/* Recent Questions */}
       {selectedClass && (
