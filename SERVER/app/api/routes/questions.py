@@ -8,6 +8,7 @@ from app.db.models import Question, Answer, User
 from app.main import get_db
 from app.api.dependencies import get_current_user
 
+
 router = APIRouter()
 
 @router.post("/questions", response_model=QuestionRead)
@@ -76,3 +77,57 @@ def create_question_with_answer(question_with_answer: QuestionWithAnswerCreate, 
 def get_answers_by_question(question_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
     answers = db.query(Answer).filter(Answer.question_id == question_id).all()
     return answers
+
+
+@router.post("/questions/{question_id}/answers/{answer_id}/like", response_model=AnswerRead)
+def like_answer(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    # increasing number of likes of a specific answer
+    db_answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not db_answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+
+    db_answer.likes += 1
+    db.commit()
+    db.refresh(db_answer)
+    return db_answer
+
+
+@router.post("/questions/{question_id}/answers/{answer_id}/unlike", response_model=AnswerRead)
+def unlike_answer(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    # decreasing number of likes of a specific answer
+    db_answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not db_answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+
+    if db_answer.likes > 0:
+        db_answer.likes -= 1
+        db.commit()
+        db.refresh(db_answer)
+    return db_answer
+
+
+@router.post("/questions/{question_id}/answers/{answer_id}/dislike", response_model=AnswerRead)
+def dislike_answer(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    # increasing number of likes of a specific answer
+    db_answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not db_answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+
+    db_answer.dislikes += 1
+    db.commit()
+    db.refresh(db_answer)
+    return db_answer
+
+
+@router.post("/questions/{question_id}/answers/{answer_id}/undislike", response_model=AnswerRead)
+def undislike_answer(answer_id: int, db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    # decreasing number of dislikes of a specific answer
+    db_answer = db.query(Answer).filter(Answer.id == answer_id).first()
+    if not db_answer:
+        raise HTTPException(status_code=404, detail="Answer not found")
+
+    if db_answer.dislikes > 0:
+        db_answer.dislikes -= 1
+        db.commit()
+        db.refresh(db_answer)
+    return db_answer
