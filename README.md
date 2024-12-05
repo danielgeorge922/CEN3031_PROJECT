@@ -1,7 +1,7 @@
 # BrainBoosters
 
 ## Project Overview
-BrainBoosters is a platform designed to enhance student engagement and interaction. It enables students to ask and answer questions to help each other.
+BrainBoosters is a collaborative platform that fosters student engagement and peer-to-peer learning. It enables students to connect by asking and answering questions, creating a supportive environment for shared knowledge and growth.
 
 ## Features
 - **Account Creation and Login**: securely create a new account or login.
