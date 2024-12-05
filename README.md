@@ -4,8 +4,8 @@
 BrainBoosters is a platform designed to enhance student engagement and interaction. It enables students to ask and answer questions to help each other.
 
 ## Features
-- **Account Creation and Login**: securely create a new account or login.
-- **Ask Questions**: Post questions for the other students to answer or post questions with the answer itself.
+-**Account Creation and Login**: securely create a new account or login.
+-**Ask Questions**: Post questions for the other students to answer or post questions with the answer itself.
 -**Answer Question**: provide answers to previously asked questions.
 -**Like/Dislike Answers**: Rate answers based on their accuracies.
 -**Progress Tracking**: Visualize personal progress based on your posted questions and answers
