@@ -22,6 +22,8 @@ class User(Base):
     classes = relationship("Class", secondary=user_classes, back_populates="users")
     questions = relationship("Question", back_populates="user")
     answers = relationship("Answer", back_populates="user")
+    liked_answers = relationship("Like", back_populates="user")
+    disliked_answers = relationship("Dislike", back_populates="user")
 
 class Class(Base):
     __tablename__ = 'classes'
@@ -51,8 +53,26 @@ class Answer(Base):
     text = Column(String, nullable=False)
     question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    likes = Column(Integer, default=0)
-    dislikes = Column(Integer, default=0)
 
     user = relationship("User", back_populates="answers")
     question = relationship("Question", back_populates="answers")
+    liked_by_users = relationship("Like", back_populates="answer")
+    disliked_by_users = relationship("Dislike", back_populates="answer")
+
+class Like(Base):
+    __tablename__ = 'likes'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    answer_id = Column(Integer, ForeignKey('answers.id'), nullable=False)
+
+    user = relationship("User", back_populates="liked_answers")
+    answer = relationship("Answer", back_populates="liked_by_users")
+
+class Dislike(Base):
+    __tablename__ = 'dislikes'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    answer_id = Column(Integer, ForeignKey('answers.id'), nullable=False)
+
+    user = relationship("User", back_populates="disliked_answers")
+    answer = relationship("Answer", back_populates="disliked_by_users")

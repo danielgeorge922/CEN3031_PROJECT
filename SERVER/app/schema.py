@@ -69,6 +69,8 @@ class AnswerRead(AnswerBase):
     user_id: int
     likes: int
     dislikes: int
+    liked_by_user: bool
+    disliked_by_user: bool
 
     class Config:
         orm_mode: True
@@ -92,3 +94,29 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str | None = None
+
+class LikeBase(BaseModel):
+    user_id: int
+    answer_id: int
+
+class LikeCreate(LikeBase):
+    pass
+
+class LikeRead(LikeBase):
+    id: int
+
+    class Config:
+        orm_mode: True
+
+class DislikeBase(BaseModel):
+    user_id: int
+    answer_id: int
+
+class DislikeCreate(DislikeBase):
+    pass
+
+class DislikeRead(DislikeBase):
+    id: int
+
+    class Config:
+        orm_mode: True

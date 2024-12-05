@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Depends
-from app.db.models import User, Answer
+from app.db.models import User, Answer, Like, Dislike
 import jwt
 
 from pydantic import EmailStr
@@ -31,15 +31,33 @@ def add_point_to_user(user_id: int, db: Session):
         db.commit()
 
 def like_answer(answer_id: int, user_id: int, db: Session):
-    answer = db.query(Answer).filter(Answer.id == answer_id).first()
-    if not answer:
-        raise HTTPException(status_code=404, detail="Answer not found")
-    answer.likes += 1
+    existing_like = db.query(Like).filter(Like.answer_id == answer_id, Like.user_id == user_id).first()
+    if existing_like:
+        raise HTTPException(status_code=400, detail="User has already liked this answer")
+    
+    new_like = Like(user_id=user_id, answer_id=answer_id)
+    db.add(new_like)
     db.commit()
 
 def dislike_answer(answer_id: int, user_id: int, db: Session):
-    answer = db.query(Answer).filter(Answer.id == answer_id).first()
-    if not answer:
-        raise HTTPException(status_code=404, detail="Answer not found")
-    answer.dislikes += 1
+    existing_dislike = db.query(Dislike).filter(Dislike.answer_id == answer_id, Dislike.user_id == user_id).first()
+    if existing_dislike:
+        raise HTTPException(status_code=400, detail="User has already disliked this answer")
+    
+    new_dislike = Dislike(user_id=user_id, answer_id=answer_id)
+    db.add(new_dislike)
+    db.commit()
+
+def unlike_answer(answer_id: int, user_id: int, db: Session):
+    like = db.query(Like).filter(Like.answer_id == answer_id, Like.user_id == user_id).first()
+    if not like:
+        raise HTTPException(status_code=404, detail="Like not found")
+    db.delete(like)
+    db.commit()
+
+def undislike_answer(answer_id: int, user_id: int, db: Session):
+    dislike = db.query(Dislike).filter(Dislike.answer_id == answer_id, Dislike.user_id == user_id).first()
+    if not dislike:
+        raise HTTPException(status_code=404, detail="Dislike not found")
+    db.delete(dislike)
     db.commit()
