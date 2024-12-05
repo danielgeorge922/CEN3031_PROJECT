@@ -21,7 +21,7 @@ function Profile() {
   const [lastName, setLastName] = useState("");
   const [profilePic, setProfilePic] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [badgeProgress, setBadgeProgress] = useState(60); // Example progress
+  // const [badgeProgress, setBadgeProgress] = useState(60); // Example progress
   const [points, setPoints] = useState("")
 
   const handleFirstNameChange = (event) => setFirstName(event.target.value);
@@ -245,13 +245,13 @@ function Profile() {
 
           <div className="flex flex-col gap-4 pt-7">
           {/* Badge for +1 */}
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div className="flex items-center bg-yellow-600 justify-center text-white rounded-full px-3 py-2">
               <span className="text-xl font-bold mr-1.5">+</span>
               <p className="font-bold">1</p>
             </div>
             <p className="ml-4">Have your Question liked</p>
-          </div>
+          </div> */}
 
           {/* Badge for +2 */}
           <div className="flex items-center">
