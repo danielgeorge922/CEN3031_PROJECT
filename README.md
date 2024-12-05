@@ -28,8 +28,10 @@ Ensure you have the following installed:
 ### Steps
 1. clone the repository
 2. install dependencies
+
 ```npm install```
 
 3. start the server
+
 ```npm start```
 
