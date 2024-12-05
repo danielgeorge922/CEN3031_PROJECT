@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import EmailStr, BaseModel, Field
 from sqlmodel import Relationship
-from typing import List
+from typing import List, Optional
 
 class UserBase(BaseModel):
     email: EmailStr     
@@ -67,10 +67,10 @@ class AnswerRead(AnswerBase):
     id: int
     question_id: int
     user_id: int
-    likes: int
-    dislikes: int
-    liked_by_user: bool
-    disliked_by_user: bool
+    likes: Optional[int] = 0
+    dislikes: Optional[int] = 0
+    liked_by_user: Optional[bool] = False
+    disliked_by_user: Optional[bool] = False
 
     class Config:
         orm_mode: True

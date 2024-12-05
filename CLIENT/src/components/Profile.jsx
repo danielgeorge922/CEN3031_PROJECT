@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -16,12 +17,12 @@ import "@fontsource/poppins"; // Defaults to weight 400
 
 
 function Profile() {
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [profilePic, setProfilePic] = useState(null);
   const [editing, setEditing] = useState(false);
   const [badgeProgress, setBadgeProgress] = useState(60); // Example progress
-  const [points,setPoints] = useState("")
+  const [points, setPoints] = useState("")
 
   const handleFirstNameChange = (event) => setFirstName(event.target.value);
   const handleLastNameChange = (event) => setLastName(event.target.value);
@@ -33,30 +34,28 @@ function Profile() {
     }
   };
 
-  // useEffect(()=>{
-  //      const getUserInfo = async () => {
-  //   try{
-  //     const access_token = localStorage.getItem("token");
-  //     const response = await axios.get("http://127.0.0.1:8000/users/me", {
-  //       headers: {
-  //         Authorization: `Bearer ${access_token}`,
-  //       },
-  //     });
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        // retrive token
+        const access_token = localStorage.getItem("token");
 
-  //     const { points } = response.data;
-  //     setPoints(points);
-      
-  //     const {first} = response.data;
-  //     setFirstName(first);
-
-  //     const {last} = response.data
-  //     setLastName(last);
-
-  //   } catch(error){
-  //     console.log(error)
-  //   }
-  // }
-  // },[])
+        // fetch user data
+        const response = await axios.get("http://127.0.0.1:8000/users/me", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        
+        setFirstName(response.data.first_name);
+        setLastName(response.data.last_name);
+        setPoints(response.data.user_points);
+      } catch (error) {
+        console.error("Error fetching user info: ", error);
+      }
+    }
+    fetchUserInfo();
+  }, []);
 
   const toggleEditing = () => setEditing(!editing);
 
@@ -121,9 +120,11 @@ function Profile() {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              gap: 2,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
               width: "100%",
+              gap: 2,
             }}
           >
             {editing ? (
@@ -144,12 +145,16 @@ function Profile() {
                 />
               </>
             ) : (
-              <Typography variant="h6">{`${firstName} ${lastName}`}</Typography>
+              <Typography variant="h6" sx={{ fontSize: "1.5rem" }}>
+                {`${firstName} ${lastName}`} {/* Make the name display larger */}
+              </Typography>
             )}
+            
+            {/* The edit button stays next to the name */}
             <IconButton
               onClick={toggleEditing}
               color="primary"
-              sx={{ alignSelf: "center" }}
+              sx={{ marginLeft: 2 }} // Add some space between the name and the button
             >
               {editing ? <SaveIcon /> : <EditIcon />}
             </IconButton>
@@ -157,11 +162,7 @@ function Profile() {
 
           {editing && (
             <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={toggleEditing}
-              >
+              <Button variant="contained" color="primary" onClick={toggleEditing}>
                 Save Changes
               </Button>
               <Button
@@ -212,8 +213,8 @@ function Profile() {
             }}
           >
             <Typography variant="h6" sx={{ fontWeight: "bold", color: "#006064" }}>
-              {/* Points: {points} */}
-              Points: 10
+              {/* Points Section */}
+              Points: {points}
             </Typography>
           </Box>
 

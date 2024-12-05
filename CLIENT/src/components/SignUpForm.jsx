@@ -73,7 +73,6 @@ const SignUpForm = () => {
 
           await Promise.all(joinPromises);
 
-          alert('Account created successfully!');
           navigate('/main');
         } else {
           // Handle unexpected status codes here

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import AnswerCard from './AnswerCard';
 
-const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
+const QuestionCardModal = ({ open, onClose, text, className, questionId, userName }) => {
   const [answers, setAnswers] = useState([]);
   const [newAnswer, setNewAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +31,7 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
               Authorization: `Bearer ${access_token}`,
             },
           });
+
           setAnswers(response.data);
         } catch (error) {
           console.error("Error fetching answers: ", error);
@@ -48,7 +49,6 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
       setIsSubmitting(true);
       const access_token = localStorage.getItem('token');
       const payload = {
-        question_id: questionId,
         text: newAnswer,
       };
       const response = await axios.post(`http://127.0.0.1:8000/questions/questions/${questionId}/answers`, payload, {
@@ -99,7 +99,7 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
             alt="User Profile"
             sx={{ width: 50, height: 50, mr: 2 }}
           />
-          <Typography variant="h6">Anonymous User</Typography> {/* Default name */}
+          <Typography variant="h6">{userName}</Typography> {/* Default name */}
         </Box>
 
         {/* Question Content */}
@@ -123,10 +123,13 @@ const QuestionCardModal = ({ open, onClose, text, className, questionId }) => {
               key={answer.id}
               answer={{
                 userProfile: { name: `User ${answer.user_id}`, picture: undefined },
+                id: answer.id,
                 text: answer.text,
-                upvotes: 0, // Default placeholder
-                downvotes: 0, // Default placeholder
-                replies: [], // Default placeholder
+                upvotes: answer.likes,
+                downvotes: answer.dislikes,
+                upvoted: answer.liked_by_user,
+                downvoted: answer.disliked_by_user,
+                //replies: [],
               }}
             />
           ))

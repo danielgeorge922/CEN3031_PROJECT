@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogActions,
   Box,
+  Snackbar,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -30,6 +31,10 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
   const [selectedClass, setSelectedClass] = useState("");
   const [question, setQuestion] = useState("");
   const [classOptions, setClassOptions] = useState([]); // Holds classes fetched from the API
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   useEffect(() => {
     // Fetch classes from the API
@@ -59,12 +64,19 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
 
     if (selectedClassObject && isQuestionValid) {
       try {
+        const access_token = localStorage.getItem("token");
+
+        const userInfo = await axios.get("http://127.0.0.1:8000/users/me", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
         const data = {
           class_id: selectedClassObject.id, // Use the id from the selected class
-          title: "test-question",
+          title: `${userInfo.data.first_name} ${userInfo.data.last_name}`, // fetch name and use it
           text: question,
         };
-        const access_token = localStorage.getItem("token");
 
         const response = await axios.post("http://127.0.0.1:8000/questions/questions", data, {
             headers: {
@@ -74,15 +86,16 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
         );
 
         console.log("Question submitted successfully:", response.data);
-        alert("Question submitted successfully!");
         if (onQuestionSubmitted) onQuestionSubmitted(); // Trigger main screen refresh
         onClose();
       } catch (error) {
         console.error("Error submitting question:", error);
-        alert("Failed to submit the question.");
+        setSnackbarMessage("Failed to submit the question.");
+        setSnackbarOpen(true);
       }
     } else {
-      alert("Please select a class and enter a valid question.");
+      setSnackbarMessage("Please select a class and enter a valid question.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -96,7 +109,6 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
           alignItems: "center",
         }}
       >
-        {/* Class Dropdown */}
         <StyledTextField
           select
           label="Select Class"
@@ -123,8 +135,7 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
           ))}
         </StyledTextField>
         <ValidationMessage>Please select a class.</ValidationMessage>
-
-        {/* Question Input Field */}
+  
         <StyledTextField
           label="Enter Your Question"
           variant="filled"
@@ -154,8 +165,17 @@ const AddQuestionModal = ({ open, onClose, onQuestionSubmitted }) => {
           Submit Question
         </Button>
       </DialogActions>
+  
+      {/* Snackbar for feedback */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </Dialog>
-  );
+  );  
 };
 
 export default AddQuestionModal;

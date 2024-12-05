@@ -44,7 +44,7 @@ const getPieColor = (percentage) => {
   return '#4caf50'; // Green
 };
 
-const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
+const QuestionCard = ({ id, text, className, userName, profilePic, upvoteCount = 0, downvoteCount = 0 }) => {
   const [open, setOpen] = useState(false);
   const [upvotes, setUpvotes] = useState(upvoteCount);
   const [downvotes, setDownvotes] = useState(downvoteCount);
@@ -122,7 +122,7 @@ const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvo
 
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
           {/* Upvote/Downvote Section */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton onClick={handleUpvote} sx={{ color: isUpvoted ? '#4caf50' : '#9e9e9e' }}>
               <ThumbUpIcon />
             </IconButton>
@@ -135,10 +135,10 @@ const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvo
             <Typography variant="body2" sx={{ mr: 2 }}>
               {downvotes}
             </Typography>
-          </Box>
+          </Box> */}
 
           {/* Mini Pie Chart or Gray Circle if No Votes */}
-          <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+          {/* <Box sx={{ position: 'relative', display: 'inline-flex' }}>
             {totalVotes > 0 ? (
               <>
                 <CircularProgress
@@ -198,7 +198,7 @@ const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvo
                 </Box>
               </>
             )}
-          </Box>
+          </Box> */}
         </Box>
       </StyledCard>
 
@@ -209,6 +209,7 @@ const QuestionCard = ({ id, text, className, profilePic, upvoteCount = 0, downvo
         text={text}
         className={className}
         questionId={id}
+        userName={userName}
       />
     </>
   );

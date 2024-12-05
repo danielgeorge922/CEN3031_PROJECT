@@ -35,7 +35,7 @@ const LoginForm = ({ handleClose, handleLogin }) => {
       if (response.status === 200 || response.status === 201) {
         const { access_token } = response.data;
         localStorage.setItem('token', access_token); // Store token in localStorage
-        alert('Logged in successfully');
+        //alert('Logged in successfully');
         navigate('/main');
       }
     } catch (err) {

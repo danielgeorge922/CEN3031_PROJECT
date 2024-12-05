@@ -135,22 +135,42 @@ const useStyles = makeStyles({
 //   );
 // };
 
-const Points = ({points}) => {
-  return (
-    <div className="text-4xl flex items-center justify-center bg-green-900 max-w-[400px] p-2 shadow-lg">
-      <div className="flex text-white">
-        Current Points: 
-      </div>
-      <div className="flex ml-3 bg-blue-100 p-4 rounded-full">
-        <h1 className="font-semibold ">
-            10
-            {points}
-        </h1>
-      </div>
-      
-    </div>
-  )
-}
+// const Points = ({ points }) => {
+//   return (
+//     <Box
+//       sx={{
+//         display: "inline-flex",
+//         alignItems: "center",
+//         backgroundColor: "#ffffff", // Light grey background for a softer look
+//         borderRadius: "12px", // Slightly rounder edges
+//         padding: "8px 16px",
+//         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Softer, larger shadow for depth
+//       }}
+//     >
+//       <Typography
+//         variant="h6"
+//         sx={{
+//           color: "#333", // Dark grey for the text, softer than pure black
+//           fontWeight: "bold", // Slightly lighter weight
+//           fontFamily: "'Poppins', sans-serif",
+//           marginRight: "8px",
+//         }}
+//       >
+//         Current Points:
+//       </Typography>
+//       <Typography
+//         variant="h6"
+//         sx={{
+//           color: "#06c975", // Subtle teal color for points to make it stand out
+//           fontWeight: "bold", // Bold for emphasis
+//           fontFamily: "'Poppins', sans-serif",
+//         }}
+//       >
+//         {points}
+//       </Typography>
+//     </Box>
+//   );
+// };
 
 const Mainscreen = () => {
   const [userClasses, setUserClasses] = useState([]);
@@ -161,7 +181,7 @@ const Mainscreen = () => {
   const [classesPerPage, setClassesPerPage] = useState(4);
   const [isModalOpen, setIsModalOpen] = useState(false); // Dynamically set this based on screen size
   const [selectedClass, setSelectedClass] = useState(null);
-  // const [points,setPoints] = useState = ("")
+  // const [points, setPoints] = useState(0);
   // const [firstName,setFirstName] = useState = ("")
   // const [lastName,setLastName] = useState = ("")
 
@@ -175,8 +195,39 @@ const Mainscreen = () => {
     setClassesPerPage(cardsThatFit);
   };
 
+  const getQuestions = async () => {
+    try {
+      const access_token = localStorage.getItem("token");
+      const response = await axios.get("http://127.0.0.1:8000/questions/user/questions", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+  
+      setQuestions(response.data); // Store questions in state
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
   // get classes and questions from server upon mounting
   useEffect(() => {
+    // const getPoints = async () => {
+    //   try {
+    //     const access_token = localStorage.getItem("token");
+    //     const response = await axios.get("http://127.0.0.1:8000/users/me", {
+    //       headers: {
+    //         Authorization: `Bearer ${access_token}`,
+    //       },
+    //     });
+  
+    //     setPoints(response.data.user_points);
+    //     console.log(points);
+    //   } catch(error){
+    //     console.log(error)
+    //   }
+    // };
+
     const getClasses = async () => {
       try {
         const access_token = localStorage.getItem("token");
@@ -191,22 +242,8 @@ const Mainscreen = () => {
         console.error("Error fetching user classes:", error);
       }
     };
-
-    const getQuestions = async () => {
-      try {
-        const access_token = localStorage.getItem("token");
-        const response = await axios.get("http://127.0.0.1:8000/questions/user/questions", {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
-    
-        setQuestions(response.data); // Store questions in state
-      } catch (error) {
-        console.error("Error fetching questions:", error);
-      }
-    };
   
+    // getPoints();
     getClasses();
     getQuestions();
 
@@ -235,31 +272,6 @@ const Mainscreen = () => {
   const classNames = userClasses.map((classObj) => classObj.name); // make array of class names from class objs
   const pagedClasses = classNames.slice(startIndex, endIndex);
 
-  
-
-   // const getUserInfo = async () => {
-  //   try{
-  //     const access_token = localStorage.getItem("token");
-  //     const response = await axios.get("http://127.0.0.1:8000/users/me", {
-  //       headers: {
-  //         Authorization: `Bearer ${access_token}`,
-  //       },
-  //     });
-
-  //     const { points } = response.data;
-  //     setPoints(points);
-      
-  //     const {first} = response.data;
-  //     setFirstName(first);
-
-  //     const {last} = response.data
-  //     setLastName(last);
-
-  //   } catch(error){
-  //     console.log(error)
-  //   }
-  // }
-
   const handleNextPage = () => {
     if (endIndex < userClasses.length) {
       setPage(page + 1);
@@ -272,23 +284,7 @@ const Mainscreen = () => {
     }
   };
 
-  const refreshQuestions = async () => {
-    try {
-      const access_token = localStorage.getItem("token");
-      const response = await axios.get("http://127.0.0.1:8000/questions/user/questions", {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
   
-      setQuestions(response.data); // Update the state with new questions
-    } catch (error) {
-      console.error("Error refreshing questions:", error);
-    }
-  };
-  
-
-
   return (
     <div className="p-6" style={{ background: "#f9f9f9", minHeight: "100vh" }}>
 
@@ -361,7 +357,7 @@ const Mainscreen = () => {
       </div>
 
       {/* Gradient Progress Bar */}
-      <Points/>
+      {/* <Points points={points} /> */}
 
       {/* Recent Questions */}
       {selectedClass && (
@@ -396,7 +392,8 @@ const Mainscreen = () => {
                   key={question.id}
                   id={question.id}
                   text={question.text}
-                  className={className}  // Now passing the class name
+                  className={className}
+                  userName={question.title}
                 />
               );
             })
@@ -405,7 +402,7 @@ const Mainscreen = () => {
           )}
         </div>
       </div>
-      <AddQuestionModal open={isModalOpen} onClose={handleCloseModal} onQuestionSubmitted={refreshQuestions}/>
+      <AddQuestionModal open={isModalOpen} onClose={handleCloseModal} onQuestionSubmitted={getQuestions}/>
     </div>
   );
 };

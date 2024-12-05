@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -13,49 +14,79 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ReplyCard from './ReplyCard';
 
 const AnswerCard = ({ answer }) => {
-  const [upvoted, setUpvoted] = useState(false);
-  const [downvoted, setDownvoted] = useState(false);
-  const [upvotes, setUpvotes] = useState(answer.upvotes || 0);
-  const [downvotes, setDownvotes] = useState(answer.downvotes || 0);
-  const [replyText, setReplyText] = useState('');
-  const [showReplyInput, setShowReplyInput] = useState(false);
+  const [upvoted, setUpvoted] = useState(answer.upvoted);
+  const [downvoted, setDownvoted] = useState(answer.downvoted);
+  const [upvotes, setUpvotes] = useState(answer.upvotes);
+  const [downvotes, setDownvotes] = useState(answer.downvotes);
+  // const [replyText, setReplyText] = useState('');
+  // const [showReplyInput, setShowReplyInput] = useState(false);
 
   const totalVotes = upvotes + downvotes;
   const likePercentage = totalVotes > 0 ? (upvotes / totalVotes) * 100 : 0;
   const pieColor = likePercentage < 40 ? '#f44336' : likePercentage < 70 ? '#ffeb3b' : '#4caf50';
 
-  const handleUpvote = () => {
-    if (upvoted) {
-      setUpvotes(upvotes - 1);
-      setUpvoted(false);
-    } else {
-      setUpvotes(upvotes + 1);
-      if (downvoted) {
-        setDownvotes(downvotes - 1);
-        setDownvoted(false);
-      }
-      setUpvoted(true);
-    }
-  };
-
-  const handleDownvote = () => {
-    if (downvoted) {
-      setDownvotes(downvotes - 1);
-      setDownvoted(false);
-    } else {
-      setDownvotes(downvotes + 1);
+  const handleUpvote = async () => {
+    try {
+      const access_token = localStorage.getItem("token");
       if (upvoted) {
         setUpvotes(upvotes - 1);
         setUpvoted(false);
+        await axios.put(`http://127.0.0.1:8000/questions/answers/${answer.id}/unlike`, {}, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+      } else {
+        setUpvotes(upvotes + 1);
+        if (downvoted) {
+          setDownvotes(downvotes - 1);
+          setDownvoted(false);
+        }
+        setUpvoted(true);
+        await axios.put(`http://127.0.0.1:8000/questions/answers/${answer.id}/like`, {}, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
       }
-      setDownvoted(true);
+    } catch(error) {
+      console.error("Error liking answer", error);
     }
   };
 
-  const handleReplySubmit = () => {
-    setShowReplyInput(false);
-    setReplyText('');
+  const handleDownvote = async () => {
+    try {
+      const access_token = localStorage.getItem("token");
+      if (downvoted) {
+        setDownvotes(downvotes - 1);
+        setDownvoted(false);
+        await axios.put(`http://127.0.0.1:8000/questions/answers/${answer.id}/undislike`, {}, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+      } else {
+        setDownvotes(downvotes + 1);
+        if (upvoted) {
+          setUpvotes(upvotes - 1);
+          setUpvoted(false);
+        }
+        setDownvoted(true);
+        await axios.put(`http://127.0.0.1:8000/questions/answers/${answer.id}/dislike`, {}, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error disliking answer", error);
+    }
   };
+
+  // const handleReplySubmit = () => {
+  //   setShowReplyInput(false);
+  //   setReplyText('');
+  // };
 
   return (
     <Box sx={{ mb: 3, p: 2, borderRadius: 2, boxShadow: 1, backgroundColor: '#f9f9f9' }}>
@@ -102,14 +133,14 @@ const AnswerCard = ({ answer }) => {
       </Box>
 
       {/* Replies */}
-      <Box sx={{ mt: 2 }}>
+      {/* <Box sx={{ mt: 2 }}>
         {answer.replies.map((reply, index) => (
           <ReplyCard key={index} reply={reply} />
         ))}
-      </Box>
+      </Box> */}
 
       {/* Reply Input */}
-      {showReplyInput ? (
+      {/* {showReplyInput ? (
         <Box sx={{ mt: 2 }}>
           <TextField
             label="Write a reply..."
@@ -128,7 +159,7 @@ const AnswerCard = ({ answer }) => {
         <Button onClick={() => setShowReplyInput(true)} sx={{ mt: 1 }} color="primary">
           Reply
         </Button>
-      )}
+      )} */}
     </Box>
   );
 };
